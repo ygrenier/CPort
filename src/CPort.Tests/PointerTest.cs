@@ -77,5 +77,27 @@ namespace CPort.Tests
             Assert.Equal(new int[] { }, p.ToArray());
         }
 
+        [Fact]
+        public void TestGetHashCode()
+        {
+            int[] source = Enumerable.Range(1, 10).ToArray();
+
+            var p = new Pointer<int>(source);
+            Assert.Equal(source.GetHashCode() ^ 0, p.GetHashCode());
+
+            p = new Pointer<int>(source, 6);
+            Assert.Equal(source.GetHashCode() ^ 6, p.GetHashCode());
+
+            p = new Pointer<int>(source, 50);
+            Assert.Equal(source.GetHashCode() ^ 50, p.GetHashCode());
+
+            p = new Pointer<int>(source, -50);
+            Assert.Equal(source.GetHashCode() ^ 0, p.GetHashCode());
+
+            p = new Pointer<int>(null, 0);
+            Assert.Equal(0, p.GetHashCode());
+        }
+
+
     }
 }

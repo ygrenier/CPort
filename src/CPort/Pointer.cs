@@ -50,6 +50,18 @@ namespace CPort
         }
         #endregion
 
+        #region Overrides
+
+        /// <summary>
+        /// HashCode
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return (Source?.GetHashCode() ?? 0) ^ Index.GetHashCode();
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
