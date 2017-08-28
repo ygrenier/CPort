@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Yan Grenier</Authors>
+    <Company>Yan Grenier</Company>
+    <Description>Library for help the portage of C code to C#</Description>
+    <Copyright>2017 - Yan Grenier</Copyright>
+    <PackageTags>C, C portage</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Version>0.0.1</Version>
+    <PackageReleaseNotes>0.0.1: 
+- Base of project
+</PackageReleaseNotes>
+  </PropertyGroup>
+
+</Project>
