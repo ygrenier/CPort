@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CPort", "CPort\CPort.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CPort.Tests", "CPort.Tests\CPort.Tests.csproj", "{B7734FA5-EDEA-46A1-BF1A-6B1A73999950}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{463227E6-CEA5-47F4-9636-4239BAA13EF5}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\coverage.ps1 = ..\build\coverage.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
