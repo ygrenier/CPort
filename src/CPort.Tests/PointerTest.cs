@@ -9,6 +9,7 @@ namespace CPort.Tests
 {
     public class PointerTest
     {
+
         [Fact]
         public void Create()
         {
@@ -98,6 +99,30 @@ namespace CPort.Tests
             Assert.Equal(0, p.GetHashCode());
         }
 
+        [Fact]
+        public void TestEquals()
+        {
+            int[] source = Enumerable.Range(1, 10).ToArray();
+
+            var p1 = new Pointer<int>(source);
+            Assert.True(p1.Equals(source));
+
+            var p2 = new Pointer<int>(source, 6);
+            Assert.False(p2.Equals(source));
+
+            var p3 = new Pointer<int>(null, 0);
+            Assert.False(p3.Equals(source));
+
+            Assert.True(p1.Equals(new Pointer<int>(source, 0)));
+            Assert.False(p1.Equals(new Pointer<int>(source, 6)));
+            Assert.False(p2.Equals(new Pointer<int>(source, 0)));
+            Assert.True(p2.Equals(new Pointer<int>(source, 6)));
+            Assert.False(p3.Equals(new Pointer<int>(source, 0)));
+            Assert.False(p3.Equals(new Pointer<int>(source, 6)));
+
+            Assert.False(p1.Equals(null));
+            Assert.False(p1.Equals(123));
+        }
 
     }
 }

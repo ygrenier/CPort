@@ -60,6 +60,22 @@ namespace CPort
             return (Source?.GetHashCode() ?? 0) ^ Index.GetHashCode();
         }
 
+        /// <summary>
+        /// Determine if <paramref name="obj"/> is equals with this pointer
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (obj is IList<T>)
+            {
+                return Source == obj && Index == 0;
+            }
+            else if (obj is Pointer<T> pobj)
+            {
+                return Source == pobj.Source && Index == pobj.Index;
+            }
+            return base.Equals(obj);
+        }
+
         #endregion
 
         #region Properties
