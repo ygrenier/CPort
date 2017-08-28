@@ -124,5 +124,38 @@ namespace CPort.Tests
             Assert.False(p1.Equals(123));
         }
 
+        [Fact]
+        public void Casts()
+        {
+            int[] array = Enumerable.Range(1, 10).ToArray();
+            List<int> list = new List<int>(array);
+
+            Pointer<int> p = array;
+            Assert.Same(array, p.Source);
+            Assert.Equal(0, p.Index);
+
+            p = list;
+            Assert.Same(list, p.Source);
+            Assert.Equal(0, p.Index);
+
+            int[] narray = (int[])p;
+            Assert.Equal(narray, array);
+
+            List<int> nlist = (List<int>)p;
+            Assert.Equal(nlist, list);
+
+            p = new Pointer<int>(array, 5);
+            narray = (int[])p;
+            Assert.Equal(narray, array.Skip(5));
+            nlist = (List<int>)p;
+            Assert.Equal(nlist, list.Skip(5));
+
+            p = new Pointer<int>();
+            narray = (int[])p;
+            Assert.Null(narray);
+            nlist = (List<int>)p;
+            Assert.Null(nlist);
+        }
+
     }
 }

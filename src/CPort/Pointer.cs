@@ -78,6 +78,42 @@ namespace CPort
 
         #endregion
 
+        #region Casts
+
+        /// <summary>
+        /// Implicit conversion of a list to a pointer
+        /// </summary>
+        public static implicit operator Pointer<T>(List<T> source)
+        {
+            return new Pointer<T>(source);
+        }
+
+        /// <summary>
+        /// Implicit conversion of an array to a pointer
+        /// </summary>
+        public static implicit operator Pointer<T>(T[] source)
+        {
+            return new Pointer<T>(source);
+        }
+
+        /// <summary>
+        /// Explicit conversion of a pointer to an array
+        /// </summary>
+        public static explicit operator T[] (Pointer<T> pointer)
+        {
+            return pointer.IsNull ? null : pointer.ToArray();
+        }
+
+        /// <summary>
+        /// Explicit conversion of a pointer to a list
+        /// </summary>
+        public static explicit operator List<T>(Pointer<T> pointer)
+        {
+            return pointer.IsNull ? null : pointer.ToList();
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
