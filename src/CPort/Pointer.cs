@@ -114,6 +114,73 @@ namespace CPort
 
         #endregion
 
+        #region Value access
+
+        /// <summary>
+        /// Read value pointed by the pointer
+        /// </summary>
+        public static implicit operator T(Pointer<T> source)
+        {
+            return source.GetValue(0);
+        }
+
+        /// <summary>
+        /// Try to get the value at an offset of this pointer
+        /// </summary>
+        public bool TryGetValue(int offset, out T value)
+        {
+            value = default(T);
+            if (Source == null) return false;
+            int idx = Index + offset;
+            if (idx < 0 || idx >= Source.Count)
+                return false;
+            value = Source[idx];
+            return true;
+        }
+
+        /// <summary>
+        /// Try to set the value at an offset of this pointer
+        /// </summary>
+        public bool TrySetValue(T value, int offset)
+        {
+            if (Source == null) return false;
+            int idx = Index + offset;
+            if (idx < 0 || idx >= Source.Count)
+                return false;
+            Source[idx] = value;
+            return true;
+        }
+
+        /// <summary>
+        /// Get the value at an offset of this pointer
+        /// </summary>
+        /// <exception cref="PointerNullException">If the pointer is null.</exception>
+        /// <exception cref="PointerOutOfRangeException">If the real index is out of range of the source of the pointer</exception>
+        public T GetValue(int offset = 0)
+        {
+            var src = Source ?? throw new PointerNullException();
+            int idx = Index + offset;
+            if (idx < 0 || idx >= Source.Count)
+                throw new PointerOutOfRangeException(idx);
+            return Source[idx];
+        }
+
+        /// <summary>
+        /// Set the value at an offset of this pointer
+        /// </summary>
+        /// <exception cref="PointerNullException">If the pointer is null.</exception>
+        /// <exception cref="PointerOutOfRangeException">If the real index is out of range of the source of the pointer</exception>
+        public void SetValue(T value, int offset = 0)
+        {
+            var src = Source ?? throw new PointerNullException();
+            int idx = Index + offset;
+            if (idx < 0 || idx >= Source.Count)
+                throw new PointerOutOfRangeException(idx);
+            Source[idx] = value;
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -130,6 +197,24 @@ namespace CPort
         /// Current index in the source of the pointer
         /// </summary>
         public int Index { get; private set; }
+
+        /// <summary>
+        /// Get/Set value from an offset
+        /// </summary>
+        public T this[int offset]
+        {
+            get { return GetValue(offset); }
+            set { SetValue(value, offset); }
+        }
+
+        /// <summary>
+        /// Get/Set the value pointed by this pointer
+        /// </summary>
+        public T Value
+        {
+            get => GetValue(0);
+            set => SetValue(value, 0);
+        }
 
         #endregion
     }

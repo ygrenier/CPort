@@ -157,5 +157,40 @@ namespace CPort.Tests
             Assert.Null(nlist);
         }
 
+
+        [Fact]
+        public void ValueAccess()
+        {
+            int[] source = Enumerable.Range(1, 10).ToArray();
+
+            var p = new Pointer<int>(source, 5);
+            Assert.Equal(6, p);
+            Assert.Equal(6, p[0]);
+            Assert.Equal(6, p.Value);
+            Assert.Throws<PointerOutOfRangeException>(() => Assert.Equal(6, p[123]));
+            Assert.True(p.TryGetValue(0, out int actual));
+            Assert.Equal(6, actual);
+            Assert.False(p.TryGetValue(123, out actual));
+            Assert.Equal(0, actual);
+
+            p.Value = 12;
+            p[2] = 13;
+            Assert.Throws<PointerOutOfRangeException>(() => p[123] = 12);
+            Assert.True(p.TrySetValue(11, 0));
+            Assert.False(p.TrySetValue(11, 123));
+
+            Assert.Equal(new int[] { 1, 2, 3, 4, 5, 11, 7, 13, 9, 10 }, source);
+
+            p = new Pointer<int>(null, 5);
+            Assert.Throws<PointerNullException>(() => actual = p);
+            Assert.Throws<PointerNullException>(() => actual = p.Value);
+            Assert.Throws<PointerNullException>(() => actual = p[0]);
+            Assert.Throws<PointerNullException>(() => p.Value = 12);
+            Assert.Throws<PointerNullException>(() => p[0] = 13);
+            Assert.False(p.TryGetValue(0, out actual));
+            Assert.False(p.TrySetValue(11, 0));
+
+        }
+
     }
 }
