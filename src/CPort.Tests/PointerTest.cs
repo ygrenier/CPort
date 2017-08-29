@@ -157,7 +157,6 @@ namespace CPort.Tests
             Assert.Null(nlist);
         }
 
-
         [Fact]
         public void ValueAccess()
         {
@@ -190,6 +189,81 @@ namespace CPort.Tests
             Assert.False(p.TryGetValue(0, out actual));
             Assert.False(p.TrySetValue(11, 0));
 
+        }
+
+        [Fact]
+        public void PointerAddSub()
+        {
+            int[] source = Enumerable.Range(1, 10).ToArray();
+
+            var p1 = new Pointer<int>(source);
+            Assert.Equal(0, p1.Index);
+            var p2 = p1 + 4;
+            Assert.Equal(0, p1.Index);
+            Assert.Equal(4, p2.Index);
+            var p3 = p2 - 6;
+            Assert.Equal(0, p1.Index);
+            Assert.Equal(4, p2.Index);
+            Assert.Equal(0, p3.Index);
+        }
+
+        [Fact]
+        public void PointerIncDec()
+        {
+            int[] source = Enumerable.Range(1, 10).ToArray();
+
+            var p = new Pointer<int>(source);
+            Assert.Equal(0, p.Index);
+            Assert.Equal(0, (p++).Index);
+            Assert.Equal(1, p.Index);
+            Assert.Equal(2, (++p).Index);
+            Assert.Equal(2, p.Index);
+            Assert.Equal(2, (p--).Index);
+            Assert.Equal(1, p.Index);
+            Assert.Equal(0, (--p).Index);
+            Assert.Equal(0, p.Index);
+            Assert.Equal(0, (--p).Index);
+            Assert.Equal(0, p.Index);
+            Assert.Equal(0, (--p).Index);
+            Assert.Equal(0, p.Index);
+        }
+
+        [Fact]
+        public void Equality()
+        {
+            int[] source = Enumerable.Range(1, 10).ToArray();
+
+            var p1 = new Pointer<int>(source);
+            Assert.True(p1 == source);
+            Assert.False(p1 != source);
+            Assert.True(source == p1);
+            Assert.False(source != p1);
+
+            var p2 = new Pointer<int>(source, 6);
+            Assert.False(p2 == source);
+            Assert.True(p2 != source);
+
+            var p3 = new Pointer<int>(null, 0);
+            Assert.False(p3 == source);
+            Assert.True(p3 != source);
+
+            Assert.True(p1 == new Pointer<int>(source, 0));
+            Assert.False(p1 != new Pointer<int>(source, 0));
+            Assert.False(p1 == new Pointer<int>(source, 6));
+            Assert.True(p1 != new Pointer<int>(source, 6));
+            Assert.False(p2 == new Pointer<int>(source, 0));
+            Assert.True(p2 != new Pointer<int>(source, 0));
+            Assert.True(p2 == new Pointer<int>(source, 6));
+            Assert.False(p2 != new Pointer<int>(source, 6));
+            Assert.False(p3 == new Pointer<int>(source, 0));
+            Assert.True(p3 != new Pointer<int>(source, 0));
+            Assert.False(p3 == new Pointer<int>(source, 6));
+            Assert.True(p3 != new Pointer<int>(source, 6));
+
+            Assert.False(p1 == null);
+            Assert.True(p1 != null);
+            Assert.True(p3 == null);
+            Assert.False(p3 != null);
         }
 
     }

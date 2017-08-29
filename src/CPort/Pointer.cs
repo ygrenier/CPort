@@ -114,6 +114,93 @@ namespace CPort
 
         #endregion
 
+        #region Pointer manipulation
+
+        /// <summary>
+        /// Increment the pointer
+        /// </summary>
+        public static Pointer<T> operator +(Pointer<T> source, int offset)
+        {
+            return new Pointer<T>(source.Source, source.Index + offset);
+        }
+
+        /// <summary>
+        /// Decrement the pointer
+        /// </summary>
+        public static Pointer<T> operator -(Pointer<T> source, int offset)
+        {
+            return new Pointer<T>(source.Source, source.Index - offset);
+        }
+
+        /// <summary>
+        /// Increment the pointer
+        /// </summary>
+        public static Pointer<T> operator ++(Pointer<T> source)
+        {
+            return new Pointer<T>(source.Source, source.Index + 1);
+        }
+
+        /// <summary>
+        /// Decrement the pointer
+        /// </summary>
+        public static Pointer<T> operator --(Pointer<T> source)
+        {
+            return new Pointer<T>(source.Source, source.Index - 1);
+        }
+
+        #endregion
+
+        #region Equality
+        /// <summary>
+        /// Test the equality of the pointer with a source
+        /// </summary>
+        public static bool operator ==(Pointer<T> pointer, T[] source)
+        {
+            return pointer.Source == source && pointer.Index == 0;
+        }
+
+        /// <summary>
+        /// Test the non equality of the pointer with a source
+        /// </summary>
+        public static bool operator !=(Pointer<T> pointer, T[] source)
+        {
+            return pointer.Source != source || pointer.Index != 0;
+        }
+
+        /// <summary>
+        /// Test the equality of the pointer with a source
+        /// </summary>
+        public static bool operator ==(T[] source, Pointer<T> pointer)
+        {
+            return pointer.Source == source && pointer.Index == 0;
+        }
+
+        /// <summary>
+        /// Test the non equality of the pointer with a source
+        /// </summary>
+        public static bool operator !=(T[] source, Pointer<T> pointer)
+        {
+            return pointer.Source != source || pointer.Index != 0;
+        }
+
+        /// <summary>
+        /// Test pointers equality
+        /// </summary>
+        public static bool operator ==(Pointer<T> p1, Pointer<T> p2)
+        {
+            return p1.Source == p2.Source && p1.Index == p2.Index;
+        }
+
+        /// <summary>
+        /// Test pointers non equality
+        /// </summary>
+        public static bool operator !=(Pointer<T> p1, Pointer<T> p2)
+        {
+            return p1.Source != p2.Source || p1.Index != p2.Index;
+        }
+
+        #endregion
+
         #region Value access
 
         /// <summary>
