@@ -12,8 +12,12 @@ namespace CPort
         /// <summary>
         /// Create a new exception
         /// </summary>
-        public PointerNullException()
-        {
-        }
+        public PointerNullException() : base("This pointer is null.") { }
+
+        /// <summary>
+        /// Create a new exception with a message
+        /// </summary>
+        public PointerNullException(string message) : base(message) { }
+
     }
 }
