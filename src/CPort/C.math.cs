@@ -147,6 +147,14 @@ namespace CPort
 #endif
         public static double fabs(double x) => Math.Abs(x);
 
+        /// <summary>
+        /// ldexp()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double ldexp(double x, int n) => x * Math.Pow(2, n);
+
     }
 #pragma warning restore IDE1006
 }

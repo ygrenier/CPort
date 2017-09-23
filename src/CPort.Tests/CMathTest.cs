@@ -144,5 +144,13 @@ namespace CPort.Tests
             Assert.Equal(Math.Abs(1d), fabs(1));
         }
 
+        [Fact]
+        public void Cldexp()
+        {
+            Assert.Equal(0.0d * Math.Pow(2, 5), ldexp(0, 5));
+            Assert.Equal(0.5d * Math.Pow(2, 5), ldexp(0.5, 5));
+            Assert.Equal(1.0d * Math.Pow(2, 5), ldexp(1, 5));
+        }
+
     }
 }
