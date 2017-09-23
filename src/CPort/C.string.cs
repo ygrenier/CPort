@@ -126,6 +126,21 @@ namespace CPort
             return 0;
         }
 
+        /// <summary>
+        /// strchr()
+        /// </summary>
+        public static Pointer<char> strchr(Pointer<char> cs, char c)
+        {
+            char ccs;
+            do
+            {
+                ccs = cs.Value;
+                if (ccs == c) return cs;
+                cs++;
+            } while (ccs > 0);
+            return new Pointer<char>();
+        }
+
     }
 
 #pragma warning restore IDE1006

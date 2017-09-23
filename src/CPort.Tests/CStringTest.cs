@@ -130,5 +130,18 @@ namespace CPort.Tests
             Assert.True(strncmp(s1, s2, 2) == 0);
         }
 
+        [Fact]
+        public void Cstrchr()
+        {
+            var cs = "abCdef".GetPointer();
+
+            var actual = strchr(cs, 'C');
+            Assert.False(actual.IsNull);
+            Assert.Equal(2, actual.Index);
+
+            actual = strchr(cs, 'c');
+            Assert.True(actual.IsNull);
+        }
+
     }
 }
