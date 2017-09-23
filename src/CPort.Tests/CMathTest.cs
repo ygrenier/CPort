@@ -152,5 +152,46 @@ namespace CPort.Tests
             Assert.Equal(1.0d * Math.Pow(2, 5), ldexp(1, 5));
         }
 
+        [Fact]
+        public void Cfrexp_double()
+        {
+            int exponent = 0;
+            Assert.Equal(0.0D, frexp(0.0D, ref exponent));
+            Assert.Equal(0, exponent);
+
+            Assert.True(frexp(12.8D, ref exponent) == 0.8D);
+            Assert.True(exponent == 4);
+
+            Assert.True(frexp(0.25D, ref exponent) == 0.5D);
+            Assert.True(exponent == -1);
+
+            Assert.True(frexp(Math.Pow(2D, 1023), ref exponent) == 0.5D);
+            Assert.True(exponent == 1024);
+
+            Assert.True(frexp(-Math.Pow(2D, -1074), ref exponent) == -0.5D);
+            Assert.True(exponent == -1073);
+
+        }
+
+        [Fact]
+        public void Cfrexp_float()
+        {
+            int exponent = 0;
+            Assert.Equal(0.0F, frexp(0.0F, ref exponent));
+            Assert.Equal(0, exponent);
+
+            Assert.True(frexp(12.8F, ref exponent) == 0.8F);
+            Assert.True(exponent == 4);
+
+            Assert.True(frexp(0.25F, ref exponent) == 0.5F);
+            Assert.True(exponent == -1);
+
+            Assert.True(frexp((float)Math.Pow(2F, 127F), ref exponent) == 0.5F);
+            Assert.True(exponent == 128);
+
+            Assert.True(frexp((float)-Math.Pow(2F, -149F), ref exponent) == -0.5F);
+            Assert.True(exponent == -148);
+        }
+
     }
 }
