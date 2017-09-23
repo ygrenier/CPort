@@ -189,6 +189,21 @@ namespace CPort
             return cnt;
         }
 
+        /// <summary>
+        /// strpbrk()
+        /// </summary>
+        public static Pointer<char> strpbrk(Pointer<char> cs, Pointer<char> ct)
+        {
+            char c;
+            while ((c = cs.Value) > 0)
+            {
+                if (!strchr(ct, c).IsNull)
+                    return cs;
+                cs++;
+            }
+            return new Pointer<char>();
+        }
+
     }
 
 #pragma warning restore IDE1006

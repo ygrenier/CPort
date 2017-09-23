@@ -186,5 +186,39 @@ namespace CPort.Tests
             Assert.Equal(0, strcspn(str, keys));
         }
 
+        [Fact]
+        public void Cstrpbrk()
+        {
+            var str = "This is a sample string".GetPointer();
+            var keys = "aeiou".GetPointer();
+
+            var actual = strpbrk(str, keys);
+            Assert.False(actual.IsNull);
+            Assert.Equal(2, actual.Index);
+
+            actual = strpbrk(actual + 1, keys);
+            Assert.False(actual.IsNull);
+            Assert.Equal(5, actual.Index);
+
+            actual = strpbrk(actual + 1, keys);
+            Assert.False(actual.IsNull);
+            Assert.Equal(8, actual.Index);
+
+            actual = strpbrk(actual + 1, keys);
+            Assert.False(actual.IsNull);
+            Assert.Equal(11, actual.Index);
+
+            actual = strpbrk(actual + 1, keys);
+            Assert.False(actual.IsNull);
+            Assert.Equal(15, actual.Index);
+
+            actual = strpbrk(actual + 1, keys);
+            Assert.False(actual.IsNull);
+            Assert.Equal(20, actual.Index);
+
+            actual = strpbrk(actual + 1, keys);
+            Assert.True(actual.IsNull);
+        }
+
     }
 }
