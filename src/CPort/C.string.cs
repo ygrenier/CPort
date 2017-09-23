@@ -132,12 +132,11 @@ namespace CPort
         public static Pointer<char> strchr(Pointer<char> cs, char c)
         {
             char ccs;
-            do
+            while ((ccs = cs.Value) > 0)
             {
-                ccs = cs.Value;
                 if (ccs == c) return cs;
                 cs++;
-            } while (ccs > 0);
+            }
             return new Pointer<char>();
         }
 
@@ -148,12 +147,11 @@ namespace CPort
         {
             var result = new Pointer<char>();
             char ccs;
-            do
+            while ((ccs = cs.Value) > 0)
             {
-                ccs = cs.Value;
                 if (ccs == c) result = cs;
                 cs++;
-            } while (ccs > 0);
+            }
             return result;
         }
 
