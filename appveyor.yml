@@ -1,6 +1,11 @@
+# Common
+environment:
+  vrs: 0.0.2
+
+for:
 # Developement
 -
-  version: 0.0.2.{build}-dev
+  version: $(vrs).{build}-dev
   branches:
     only:
       - develop
@@ -20,9 +25,9 @@
     - path: src/CPort/bin/$(configuration)/*.nupkg
       name: Nuget Packages
   
-# Build
+# Production
 -
-  version: 0.0.2.{build}
+  version: $(vrs).{build}
   branches:
     only:
       - master
@@ -38,3 +43,6 @@
   artifacts:
     - path: src/CPort/bin/$(configuration)/*.nupkg
       name: Nuget Packages
+  deploy:
+    - provider: Environment
+      name: Nuget
