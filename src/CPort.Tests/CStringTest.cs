@@ -253,5 +253,18 @@ namespace CPort.Tests
             Assert.True(actual.IsNull);
         }
 
+        [Fact]
+        public void Cstrlen()
+        {
+            var str = "Test".GetPointer();
+            Assert.Equal(4, strlen(str));
+
+            str = "Other test\0with AZT in the buffer.".GetPointer();
+            Assert.Equal(10, strlen(str));
+
+            str = new Pointer<char>();
+            Assert.Equal(0, strlen(str));
+        }
+
     }
 }

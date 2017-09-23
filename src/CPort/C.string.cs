@@ -223,6 +223,21 @@ namespace CPort
             return new Pointer<char>();
         }
 
+        /// <summary>
+        /// strlen()
+        /// </summary>
+        public static int strlen(Pointer<char> cs)
+        {
+            if (cs.IsNull) return 0;
+            int count = 0;
+            while (cs.Value > 0)
+            {
+                count++;
+                cs++;
+            }
+            return count;
+        }
+
     }
 
 #pragma warning restore IDE1006
