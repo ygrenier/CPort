@@ -266,5 +266,55 @@ namespace CPort.Tests
             Assert.Equal(0, strlen(str));
         }
 
+        [Fact]
+        public void Cstrtok()
+        {
+            var str = "- This, a sample string.".GetPointer();
+            var delimiters = " -.,".GetPointer();
+
+            Assert.True(strtok(null, delimiters).IsNull);
+
+            var actual = strtok(str, delimiters);
+            Assert.False(actual.IsNull);
+            Assert.Equal(2, actual.Index);
+            Assert.Equal("This", actual.GetString());
+
+            actual = strtok(null, delimiters);
+            Assert.False(actual.IsNull);
+            Assert.Equal(8, actual.Index);
+            Assert.Equal("a", actual.GetString());
+
+            actual = strtok(null, delimiters);
+            Assert.False(actual.IsNull);
+            Assert.Equal(10, actual.Index);
+            Assert.Equal("sample", actual.GetString());
+
+            actual = strtok(null, delimiters);
+            Assert.False(actual.IsNull);
+            Assert.Equal(17, actual.Index);
+            Assert.Equal("string", actual.GetString());
+
+            actual = strtok(null, delimiters);
+            Assert.True(actual.IsNull);
+            actual = strtok(null, delimiters);
+            Assert.True(actual.IsNull);
+
+            // Restart
+            actual = strtok(str, delimiters);
+            Assert.False(actual.IsNull);
+            Assert.Equal(2, actual.Index);
+            Assert.Equal("This", actual.GetString());
+
+            actual = strtok(null, delimiters);
+            Assert.False(actual.IsNull);
+            Assert.Equal(8, actual.Index);
+            Assert.Equal("a", actual.GetString());
+
+            actual = strtok(str, delimiters);
+            Assert.False(actual.IsNull);
+            Assert.Equal(2, actual.Index);
+            Assert.Equal("This", actual.GetString());
+        }
+
     }
 }

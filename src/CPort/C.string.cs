@@ -212,7 +212,7 @@ namespace CPort
             char c;
             while ((c = cs.Value) > 0)
             {
-                var rs = cs;var rt = ct;
+                var rs = cs; var rt = ct;
                 char crs = '\xFFFF', crt = '\xFFFF';
                 while ((crt = rt.Value) > 0 && (crs = rs.Value) > 0 && crs == crt)
                 { rs++; rt++; }
@@ -236,6 +236,33 @@ namespace CPort
                 cs++;
             }
             return count;
+        }
+
+        static Pointer<char>? _strtokCurrent = null;
+
+        /// <summary>
+        /// strtok()
+        /// </summary>
+        public static Pointer<char> strtok(Pointer<char>? s, Pointer<char> delimiters)
+        {
+            // If s is defined, reset the strtok process
+            if (s != null && !s.Value.IsNull)
+                _strtokCurrent = s;
+            // If current strtok pointer is null, stop here
+            if (_strtokCurrent == null || _strtokCurrent.Value.IsNull)
+                return new Pointer<char>();
+            // Pass the delimiters
+            var p = _strtokCurrent.Value;
+            while (p.Value > 0 && !strchr(delimiters, p.Value).IsNull) p++;
+            if (p.Value > 0)
+            {
+                var start = p;
+                while (p.Value > 0 && strchr(delimiters, p.Value).IsNull) p++;
+                p.Value = '\0';
+                _strtokCurrent = p + 1;
+                return start;
+            }
+            return new Pointer<char>();
         }
 
     }
