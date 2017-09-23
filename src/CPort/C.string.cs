@@ -109,6 +109,23 @@ namespace CPort
             return 0;
         }
 
+        /// <summary>
+        /// strncmp()
+        /// </summary>
+        public static int strncmp(Pointer<char> cs, Pointer<char> ct, int n)
+        {
+            char ccs, cct;
+            do
+            {
+                ccs = cs.Value;
+                cct = ct.Value;
+                cs++; ct++;
+                int r = ccs - cct;
+                if (r != 0) return r;
+            } while (--n > 0 && ccs > 0 && cct > 0);
+            return 0;
+        }
+
     }
 
 #pragma warning restore IDE1006

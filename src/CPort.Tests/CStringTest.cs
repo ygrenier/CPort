@@ -90,5 +90,45 @@ namespace CPort.Tests
             Assert.True(strcmp(s1, s2) > 0);
         }
 
+        [Fact]
+        public void Cstrncmp()
+        {
+            var s1 = "a".GetPointer();
+            var s2 = "a".GetPointer();
+            Assert.True(strncmp(s1, s2, 3) == 0);
+
+            s1 = "a".GetPointer();
+            s2 = "A".GetPointer();
+            Assert.True(strncmp(s1, s2, 3) > 0);
+
+            s1 = "A".GetPointer();
+            s2 = "a".GetPointer();
+            Assert.True(strncmp(s1, s2, 3) < 0);
+
+            s1 = "aBc".GetPointer();
+            s2 = "abc".GetPointer();
+            Assert.True(strncmp(s1, s2, 3) < 0);
+
+            s1 = "ab".GetPointer();
+            s2 = "abc".GetPointer();
+            Assert.True(strncmp(s1, s2, 3) < 0);
+
+            s1 = "abc".GetPointer();
+            s2 = "ab".GetPointer();
+            Assert.True(strncmp(s1, s2, 3) > 0);
+
+            s1 = "aBc".GetPointer();
+            s2 = "abc".GetPointer();
+            Assert.True(strncmp(s1, s2, 2) < 0);
+
+            s1 = "ab".GetPointer();
+            s2 = "abc".GetPointer();
+            Assert.True(strncmp(s1, s2, 2) == 0);
+
+            s1 = "abc".GetPointer();
+            s2 = "ab".GetPointer();
+            Assert.True(strncmp(s1, s2, 2) == 0);
+        }
+
     }
 }
