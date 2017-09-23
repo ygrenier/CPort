@@ -156,5 +156,20 @@ namespace CPort.Tests
             Assert.True(actual.IsNull);
         }
 
+        [Fact]
+        public void Cstrspn()
+        {
+            var str = "129th".GetPointer();
+            var keys = "1234567890".GetPointer();
+
+            Assert.Equal(3, strspn(str, keys));
+
+            str = "12".GetPointer();
+            Assert.Equal(2, strspn(str, keys));
+
+            str = "ab12".GetPointer();
+            Assert.Equal(0, strspn(str, keys));
+        }
+
     }
 }

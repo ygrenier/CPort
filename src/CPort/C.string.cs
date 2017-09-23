@@ -157,6 +157,22 @@ namespace CPort
             return result;
         }
 
+        /// <summary>
+        /// strspn()
+        /// </summary>
+        public static int strspn(Pointer<char> cs, Pointer<char> ct)
+        {
+            int cnt = 0;
+            char c;
+            while ((c = cs.Value) > 0)
+            {
+                if (strchr(ct, c).IsNull)
+                    break;
+                cnt++; cs++;
+            }
+            return cnt;
+        }
+
     }
 
 #pragma warning restore IDE1006
