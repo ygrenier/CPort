@@ -107,6 +107,14 @@ namespace CPort
 #endif
         public static double log10(double x) => Math.Log10(x);
 
+        /// <summary>
+        /// pow()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double pow(double x, double y) => Math.Pow(x, y);
+
     }
 #pragma warning restore IDE1006
 }

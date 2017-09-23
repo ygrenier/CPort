@@ -104,5 +104,13 @@ namespace CPort.Tests
             Assert.Equal(Math.Log10(1), log10(1));
         }
 
+        [Fact]
+        public void Cpow()
+        {
+            Assert.Equal(Math.Pow(12, 0), pow(12, 0));
+            Assert.Equal(Math.Pow(12, 0.5), pow(12, 0.5));
+            Assert.Equal(Math.Pow(12, 1), pow(12, 1));
+        }
+
     }
 }
