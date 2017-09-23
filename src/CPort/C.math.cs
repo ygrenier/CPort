@@ -115,6 +115,14 @@ namespace CPort
 #endif
         public static double pow(double x, double y) => Math.Pow(x, y);
 
+        /// <summary>
+        /// sqrt()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double sqrt(double x) => Math.Sqrt(x);
+
     }
 #pragma warning restore IDE1006
 }

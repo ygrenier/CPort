@@ -112,5 +112,13 @@ namespace CPort.Tests
             Assert.Equal(Math.Pow(12, 1), pow(12, 1));
         }
 
+        [Fact]
+        public void Csqrt()
+        {
+            Assert.Equal(Math.Sqrt(0), sqrt(0));
+            Assert.Equal(Math.Sqrt(0.5), sqrt(0.5));
+            Assert.Equal(Math.Sqrt(1), sqrt(1));
+        }
+
     }
 }
