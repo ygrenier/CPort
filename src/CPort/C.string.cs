@@ -74,6 +74,24 @@ namespace CPort
             return s;
         }
 
+        /// <summary>
+        /// strncat()
+        /// </summary>
+        /// <param name="s">Destination string</param>
+        /// <param name="ct">Source string</param>
+        /// <param name="n">Count of characters to concat</param>
+        /// <returns>returns <paramref name="s"/></returns>
+        public static Pointer<char> strncat(Pointer<char> s, Pointer<char> ct, int n)
+        {
+            var sd = s;
+            // Go to end
+            while (sd.Value != '\0') sd++;
+            // Copy to end
+            strncpy(sd, ct, n);
+            sd[n] = '\0';
+            return s;
+        }
+
     }
 
 #pragma warning restore IDE1006
