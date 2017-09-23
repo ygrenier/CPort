@@ -168,6 +168,14 @@ namespace CPort
             return x - ip;
         }
 
+        /// <summary>
+        /// fmod()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double fmod(double x, double y) => x % y;
+
         #region Import from https://github.com/MachineCognitis/C.math.NET
 
         #region "Properties of floating-point types."

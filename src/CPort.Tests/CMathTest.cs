@@ -210,5 +210,12 @@ namespace CPort.Tests
             Assert.Equal(-4.0, ip);
         }
 
+        [Fact]
+        public void Cfmod()
+        {
+            Assert.Equal(1.3, fmod(5.3, 2), 4);
+            Assert.Equal(-1.7, fmod(-18.5, 4.2), 4);
+        }
+
     }
 }
