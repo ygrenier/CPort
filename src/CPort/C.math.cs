@@ -91,6 +91,14 @@ namespace CPort
 #endif
         public static double tanh(double x) => Math.Tanh(x);
 
+        /// <summary>
+        /// log()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double log(double x) => Math.Log(x);
+
     }
 #pragma warning restore IDE1006
 }

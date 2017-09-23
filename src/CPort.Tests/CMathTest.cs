@@ -88,5 +88,13 @@ namespace CPort.Tests
             Assert.Equal(Math.Tanh(1), tanh(1));
         }
 
+        [Fact]
+        public void Clog()
+        {
+            Assert.Equal(Math.Log(0), log(0));
+            Assert.Equal(Math.Log(0.5), log(0.5));
+            Assert.Equal(Math.Log(1), log(1));
+        }
+
     }
 }
