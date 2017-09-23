@@ -34,6 +34,30 @@ namespace CPort
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public static double tan(double x) => Math.Tan(x);
+
+        /// <summary>
+        /// asin()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double asin(double x) => Math.Asin(x);
+
+        /// <summary>
+        /// acos()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double acos(double x) => Math.Acos(x);
+
+        /// <summary>
+        /// atan()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double atan(double x) => Math.Atan(x);
     }
 #pragma warning restore IDE1006
 }
