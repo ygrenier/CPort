@@ -159,6 +159,15 @@ namespace CPort
 #endif
         public static double ldexp(double x, int n) => x * Math.Pow(2, n);
 
+        /// <summary>
+        /// modf()
+        /// </summary>
+        public static double modf(double x, ref double ip)
+        {
+            ip = Math.Truncate(x);
+            return x - ip;
+        }
+
         #region Import from https://github.com/MachineCognitis/C.math.NET
 
         #region "Properties of floating-point types."

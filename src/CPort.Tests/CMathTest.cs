@@ -193,5 +193,22 @@ namespace CPort.Tests
             Assert.True(exponent == -148);
         }
 
+        [Fact]
+        public void Cmodf()
+        {
+            double ip = 0;
+            Assert.Equal(0.1416, modf(3.1416, ref ip), 4);
+            Assert.Equal(3.0, ip);
+
+            Assert.Equal(-0.1416, modf(-3.1416, ref ip), 4);
+            Assert.Equal(-3.0, ip);
+
+            Assert.Equal(0.9876, modf(4.9876, ref ip), 4);
+            Assert.Equal(4.0, ip);
+
+            Assert.Equal(-0.9876, modf(-4.9876, ref ip), 4);
+            Assert.Equal(-4.0, ip);
+        }
+
     }
 }
