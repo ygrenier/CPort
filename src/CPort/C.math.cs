@@ -139,6 +139,14 @@ namespace CPort
 #endif
         public static double floor(double x) => Math.Floor(x);
 
+        /// <summary>
+        /// fabs()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double fabs(double x) => Math.Abs(x);
+
     }
 #pragma warning restore IDE1006
 }

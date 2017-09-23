@@ -136,5 +136,13 @@ namespace CPort.Tests
             Assert.Equal(Math.Floor(1d), floor(1));
         }
 
+        [Fact]
+        public void Cfabs()
+        {
+            Assert.Equal(Math.Abs(0d), fabs(0));
+            Assert.Equal(Math.Abs(0.5), fabs(0.5));
+            Assert.Equal(Math.Abs(1d), fabs(1));
+        }
+
     }
 }
