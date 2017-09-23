@@ -4,6 +4,8 @@ using System.Text;
 
 namespace CPort
 {
+#pragma warning disable IDE1006
+
     /// <summary>
     /// string.h
     /// </summary>
@@ -28,6 +30,7 @@ namespace CPort
             } while (c != '\0');
             return s;
         }
+        
         /// <summary>
         /// strncpy()
         /// </summary>
@@ -54,5 +57,24 @@ namespace CPort
             }
             return s;
         }
+
+        /// <summary>
+        /// strcat()
+        /// </summary>
+        /// <param name="s">Destination string</param>
+        /// <param name="ct">Source string</param>
+        /// <returns>returns <paramref name="s"/></returns>
+        public static Pointer<char> strcat(Pointer<char> s, Pointer<char> ct)
+        {
+            var sd = s;
+            // Go to end
+            while (sd.Value != '\0') sd++;
+            // Copy to end
+            strcpy(sd, ct);
+            return s;
+        }
+
     }
+
+#pragma warning restore IDE1006
 }

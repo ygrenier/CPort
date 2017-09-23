@@ -35,7 +35,18 @@ namespace CPort.Tests
             actual = strncpy(dest, source, 7);
             Assert.Equal(new char[] { 'T', 'e', 's', 't', '\0', '\0', '\0', '7' }, actual.Take(8));
             Assert.Equal("Test\0\0\07890123456789\0", new string(actual.ToArray()));
-
         }
+
+        [Fact]
+        public void Cstrcat()
+        {
+            var source = "Test".GetPointer();
+            var dest = "012\04567890123456789".GetPointer();
+
+            var actual = strcat(dest, source);
+            Assert.Equal(new char[] { '0', '1', '2', 'T', 'e', 's', 't', '\0', '8' }, actual.Take(9));
+            Assert.Equal("012Test\0890123456789\0", new string(actual.ToArray()));
+        }
+
     }
 }
