@@ -66,6 +66,31 @@ namespace CPort
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public static double atan2(double y, double x) => Math.Atan2(y, x);
+
+        /// <summary>
+        /// sinh()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double sinh(double x) => Math.Sinh(x);
+
+        /// <summary>
+        /// cosh()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double cosh(double x) => Math.Cosh(x);
+
+        /// <summary>
+        /// tanh()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double tanh(double x) => Math.Tanh(x);
+
     }
 #pragma warning restore IDE1006
 }

@@ -63,5 +63,30 @@ namespace CPort.Tests
             Assert.Equal(Math.Atan2(0.5, 0.5), atan2(0.5, 0.5));
             Assert.Equal(Math.Atan2(0.5, 1), atan2(0.5, 1));
         }
+
+        [Fact]
+        public void Csinh()
+        {
+            Assert.Equal(Math.Sinh(0), sinh(0));
+            Assert.Equal(Math.Sinh(0.5), sinh(0.5));
+            Assert.Equal(Math.Sinh(1), sinh(1));
+        }
+
+        [Fact]
+        public void Ccosh()
+        {
+            Assert.Equal(Math.Cosh(0), cosh(0));
+            Assert.Equal(Math.Cosh(0.5), cosh(0.5));
+            Assert.Equal(Math.Cosh(1), cosh(1));
+        }
+
+        [Fact]
+        public void Ctanh()
+        {
+            Assert.Equal(Math.Tanh(0), tanh(0));
+            Assert.Equal(Math.Tanh(0.5), tanh(0.5));
+            Assert.Equal(Math.Tanh(1), tanh(1));
+        }
+
     }
 }
