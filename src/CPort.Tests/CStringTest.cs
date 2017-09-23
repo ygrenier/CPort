@@ -220,5 +220,38 @@ namespace CPort.Tests
             Assert.True(actual.IsNull);
         }
 
+        [Fact]
+        public void Cstrstr()
+        {
+            var str = "This is a sample string".GetPointer();
+            var search = "sample".GetPointer();
+
+            // In the string
+            var actual = strstr(str, search);
+            Assert.False(actual.IsNull);
+            Assert.Equal(10, actual.Index);
+
+            // Not in the string, with common start
+            search = "samPle".GetPointer();
+            actual = strstr(str, search);
+            Assert.True(actual.IsNull);
+
+            // Not in the string
+            search = "Sample".GetPointer();
+            actual = strstr(str, search);
+            Assert.True(actual.IsNull);
+
+            // At the end of the string 
+            search = "string".GetPointer();
+            actual = strstr(str, search);
+            Assert.False(actual.IsNull);
+            Assert.Equal(17, actual.Index);
+
+            // Not in the string but start at the end of the string
+            search = "ringer".GetPointer();
+            actual = strstr(str, search);
+            Assert.True(actual.IsNull);
+        }
+
     }
 }

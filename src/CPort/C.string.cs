@@ -202,6 +202,27 @@ namespace CPort
             return new Pointer<char>();
         }
 
+        /// <summary>
+        /// strstr()
+        /// </summary>
+        public static Pointer<char> strstr(Pointer<char> cs, Pointer<char> ct)
+        {
+            // If ct is empty then stop here because we never found an empty string
+            if (ct.IsNull || ct.Value == 0) return new Pointer<char>();
+            char c;
+            while ((c = cs.Value) > 0)
+            {
+                var rs = cs;var rt = ct;
+                char crs = '\xFFFF', crt = '\xFFFF';
+                while ((crt = rt.Value) > 0 && (crs = rs.Value) > 0 && crs == crt)
+                { rs++; rt++; }
+                // We found ct only if crt==0
+                if (crt == 0) return cs;
+                cs++;
+            }
+            return new Pointer<char>();
+        }
+
     }
 
 #pragma warning restore IDE1006
