@@ -99,6 +99,14 @@ namespace CPort
 #endif
         public static double log(double x) => Math.Log(x);
 
+        /// <summary>
+        /// log10()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double log10(double x) => Math.Log10(x);
+
     }
 #pragma warning restore IDE1006
 }

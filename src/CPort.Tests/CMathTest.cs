@@ -96,5 +96,13 @@ namespace CPort.Tests
             Assert.Equal(Math.Log(1), log(1));
         }
 
+        [Fact]
+        public void Clog10()
+        {
+            Assert.Equal(Math.Log10(0), log10(0));
+            Assert.Equal(Math.Log10(0.5), log10(0.5));
+            Assert.Equal(Math.Log10(1), log10(1));
+        }
+
     }
 }
