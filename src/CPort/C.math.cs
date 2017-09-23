@@ -58,6 +58,14 @@ namespace CPort
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public static double atan(double x) => Math.Atan(x);
+
+        /// <summary>
+        /// atan2()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double atan2(double y, double x) => Math.Atan2(y, x);
     }
 #pragma warning restore IDE1006
 }

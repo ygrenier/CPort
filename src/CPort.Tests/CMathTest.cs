@@ -55,5 +55,13 @@ namespace CPort.Tests
             Assert.Equal(Math.Atan(0.5), atan(0.5));
             Assert.Equal(Math.Atan(1), atan(1));
         }
+
+        [Fact]
+        public void Catan2()
+        {
+            Assert.Equal(Math.Atan2(0.5, 0), atan2(0.5, 0));
+            Assert.Equal(Math.Atan2(0.5, 0.5), atan2(0.5, 0.5));
+            Assert.Equal(Math.Atan2(0.5, 1), atan2(0.5, 1));
+        }
     }
 }
