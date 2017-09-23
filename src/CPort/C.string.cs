@@ -30,7 +30,7 @@ namespace CPort
             } while (c != '\0');
             return s;
         }
-        
+
         /// <summary>
         /// strncpy()
         /// </summary>
@@ -90,6 +90,23 @@ namespace CPort
             strncpy(sd, ct, n);
             sd[n] = '\0';
             return s;
+        }
+
+        /// <summary>
+        /// strcmp()
+        /// </summary>
+        public static int strcmp(Pointer<char> cs, Pointer<char> ct)
+        {
+            char ccs, cct;
+            do
+            {
+                ccs = cs.Value;
+                cct = ct.Value;
+                cs++; ct++;
+                int r = ccs - cct;
+                if (r != 0) return r;
+            } while (ccs > 0 && cct > 0);
+            return 0;
         }
 
     }

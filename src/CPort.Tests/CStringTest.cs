@@ -62,5 +62,33 @@ namespace CPort.Tests
             Assert.Equal("012TesTest\0\0\0\0456789\0", new string(actual.ToArray()));
         }
 
+        [Fact]
+        public void Cstrcmp()
+        {
+            var s1 = "a".GetPointer();
+            var s2 = "a".GetPointer();
+            Assert.True(strcmp(s1, s2) == 0);
+
+            s1 = "a".GetPointer();
+            s2 = "A".GetPointer();
+            Assert.True(strcmp(s1, s2) > 0);
+
+            s1 = "A".GetPointer();
+            s2 = "a".GetPointer();
+            Assert.True(strcmp(s1, s2) < 0);
+
+            s1 = "aBc".GetPointer();
+            s2 = "abc".GetPointer();
+            Assert.True(strcmp(s1, s2) < 0);
+
+            s1 = "ab".GetPointer();
+            s2 = "abc".GetPointer();
+            Assert.True(strcmp(s1, s2) < 0);
+
+            s1 = "abc".GetPointer();
+            s2 = "ab".GetPointer();
+            Assert.True(strcmp(s1, s2) > 0);
+        }
+
     }
 }
