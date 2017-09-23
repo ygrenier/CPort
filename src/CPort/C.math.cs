@@ -123,6 +123,22 @@ namespace CPort
 #endif
         public static double sqrt(double x) => Math.Sqrt(x);
 
+        /// <summary>
+        /// ceil()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double ceil(double x) => Math.Ceiling(x);
+
+        /// <summary>
+        /// floor()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double floor(double x) => Math.Floor(x);
+
     }
 #pragma warning restore IDE1006
 }

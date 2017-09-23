@@ -120,5 +120,21 @@ namespace CPort.Tests
             Assert.Equal(Math.Sqrt(1), sqrt(1));
         }
 
+        [Fact]
+        public void Cceil()
+        {
+            Assert.Equal(Math.Ceiling(0d), ceil(0));
+            Assert.Equal(Math.Ceiling(0.5), ceil(0.5));
+            Assert.Equal(Math.Ceiling(1d), ceil(1));
+        }
+
+        [Fact]
+        public void Cfloor()
+        {
+            Assert.Equal(Math.Floor(0d), floor(0));
+            Assert.Equal(Math.Floor(0.5), floor(0.5));
+            Assert.Equal(Math.Floor(1d), floor(1));
+        }
+
     }
 }
