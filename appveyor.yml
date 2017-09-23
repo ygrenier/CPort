@@ -46,3 +46,16 @@ for:
   deploy:
     - provider: Environment
       name: Nuget
+
+    - provider: GitHub
+      #tag: $(appveyor_repo_tag_name)
+      release: myproduct-v$(appveyor_build_version)
+      description: 'Version $(vrs)'
+      auth_token:
+        secure: /8U4+qBT5wE6uiNtx4eBPGl8g8i7R8zH8BFcg6va7vgti6Qw/SqT0McVgqv4pc+k
+      artifact: /.*\.nupkg/
+      draft: true
+      prerelease: false
+      on:
+        branch: master                 # release from master branch only
+        appveyor_repo_tag: true        # deploy on tag push only
