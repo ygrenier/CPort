@@ -15,5 +15,13 @@ namespace CPort.Tests
             Assert.Equal(Math.Sin(0.5), sin(0.5));
             Assert.Equal(Math.Sin(1), sin(1));
         }
+
+        [Fact]
+        public void Ccos()
+        {
+            Assert.Equal(Math.Cos(0), cos(0));
+            Assert.Equal(Math.Cos(0.5), cos(0.5));
+            Assert.Equal(Math.Cos(1), cos(1));
+        }
     }
 }

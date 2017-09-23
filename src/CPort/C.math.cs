@@ -18,6 +18,14 @@ namespace CPort
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public static double sin(double x) => Math.Sin(x);
+
+        /// <summary>
+        /// cos()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double cos(double x) => Math.Cos(x);
     }
 #pragma warning restore IDE1006
 }
