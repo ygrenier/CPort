@@ -1,6 +1,6 @@
 # Developement
 -
-  version: 0.0.1.{build}-dev
+  version: 0.0.2.{build}-dev
   branches:
     only:
       - develop
@@ -22,7 +22,7 @@
   
 # Build
 -
-  version: 0.0.1.{build}
+  version: 0.0.2.{build}
   branches:
     only:
       - master

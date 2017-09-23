@@ -9,8 +9,13 @@
     <Copyright>2017 - Yan Grenier</Copyright>
     <PackageTags>C, C portage</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Version>0.0.1</Version>
-    <PackageReleaseNotes>0.0.1: 
+    <Version>0.0.2</Version>
+    <PackageReleaseNotes>0.0.2:
+- more features
+- ctype.h library
+- math.h library
+
+0.0.1: 
 - Base of project
 </PackageReleaseNotes>
   </PropertyGroup>
