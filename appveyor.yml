@@ -1,0 +1,40 @@
+# Developement
+-
+  version: 0.0.1.{build}-dev
+  branches:
+    only:
+      - develop
+  skip_tags: true
+  skip_branch_with_pr: true
+  skip_commits:
+    message: /(Bumped)|(\[release\])/i
+  image: Visual Studio 2017
+  configuration: Debug
+  before_build:
+    - ps: nuget restore src/Cport.sln
+  build:
+    verbosity: minimal
+  test_script:
+    - ps: dotnet test src/CPort.Tests/
+  artifacts:
+    - path: src/CPort/bin/$(configuration)/*.nupkg
+      name: Nuget Packages
+  
+# Build
+-
+  version: 0.0.1.{build}
+  branches:
+    only:
+      - master
+  skip_tags: true
+  skip_branch_with_pr: true
+  image: Visual Studio 2017
+  configuration: Release
+  before_build:
+    - ps: nuget restore src/Cport.sln
+  build:
+    verbosity: minimal
+  test: off
+  artifacts:
+    - path: src/CPort/bin/$(configuration)/*.nupkg
+      name: Nuget Packages
