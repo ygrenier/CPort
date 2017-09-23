@@ -23,5 +23,13 @@ namespace CPort.Tests
             Assert.Equal(Math.Cos(0.5), cos(0.5));
             Assert.Equal(Math.Cos(1), cos(1));
         }
+
+        [Fact]
+        public void Ctan()
+        {
+            Assert.Equal(Math.Tan(0), tan(0));
+            Assert.Equal(Math.Tan(0.5), tan(0.5));
+            Assert.Equal(Math.Tan(1), tan(1));
+        }
     }
 }

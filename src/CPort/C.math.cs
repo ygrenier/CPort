@@ -26,6 +26,14 @@ namespace CPort
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public static double cos(double x) => Math.Cos(x);
+
+        /// <summary>
+        /// tan()
+        /// </summary>
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static double tan(double x) => Math.Tan(x);
     }
 #pragma warning restore IDE1006
 }
