@@ -1,14 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CPort", "CPort\CPort.csproj", "{B8AF8172-0A8F-4ECA-8ABA-DD2D2C93A3CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CPort.Tests", "CPort.Tests\CPort.Tests.csproj", "{B7734FA5-EDEA-46A1-BF1A-6B1A73999950}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CPort.Tests", "CPort.Tests\CPort.Tests.csproj", "{B7734FA5-EDEA-46A1-BF1A-6B1A73999950}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{463227E6-CEA5-47F4-9636-4239BAA13EF5}"
 	ProjectSection(SolutionItems) = preProject
+		..\appveyor.yml = ..\appveyor.yml
 		..\build\coverage.ps1 = ..\build\coverage.ps1
 	EndProjectSection
 EndProject
