@@ -1,0 +1,120 @@
+﻿using static CPort.C;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Xunit;
+
+namespace CPort.Tests
+{
+    public class CStdlibTest
+    {
+        [Fact]
+        public void Cstrtod()
+        {
+            Pointer<char> end = NULL;
+            Pointer<char> str = "".GetPointer();
+
+            Assert.Equal(0, strtod(NULL, out end));
+            Assert.True(NULL == end);
+
+            Assert.Equal(0, strtod(str, out end));
+            Assert.True(str == end);
+
+            str = "  ".GetPointer();
+            Assert.Equal(0, strtod(str, out end));
+            Assert.Equal(2, end.Index);
+
+            str = "  123.45e+2".GetPointer();
+            Assert.Equal(123.45e+2, strtod(str, out end));
+            Assert.Equal(11, end.Index);
+
+            str = "  +123.45e2".GetPointer();
+            Assert.Equal(123.45e+2, strtod(str, out end));
+            Assert.Equal(11, end.Index);
+
+            str = "  -123.45".GetPointer();
+            Assert.Equal(-123.45, strtod(str, out end));
+            Assert.Equal(9, end.Index);
+
+            str = "  -123.45Test".GetPointer();
+            Assert.Equal(-123.45, strtod(str, out end));
+            Assert.Equal(9, end.Index);
+
+            str = "  .45".GetPointer();
+            Assert.Equal(.45, strtod(str, out end));
+            Assert.Equal(5, end.Index);
+
+            str = "  .".GetPointer();
+            Assert.Equal(0, strtod(str, out end));
+            Assert.Equal(2, end.Index);
+
+            str = "  0D".GetPointer();
+            Assert.Equal(0, strtod(str, out end));
+            Assert.Equal(3, end.Index);
+
+            str = "  0xD".GetPointer();
+            Assert.Equal(0xD, strtod(str, out end));
+            Assert.Equal(5, end.Index);
+
+            str = "  -0xD".GetPointer();
+            Assert.Equal(-0xD, strtod(str, out end));
+            Assert.Equal(6, end.Index);
+
+            str = "  0xZ".GetPointer();
+            Assert.Equal(0, strtod(str, out end));
+            Assert.Equal(3, end.Index);
+
+            str = "  0.123".GetPointer();
+            Assert.Equal(0.123, strtod(str, out end));
+            Assert.Equal(7, end.Index);
+
+            str = "  0123".GetPointer();
+            Assert.Equal(123, strtod(str, out end));
+            Assert.Equal(6, end.Index);
+
+            str = "  01234567890123456789".GetPointer();
+            Assert.Equal(1234567890123456789, strtod(str, out end));
+            Assert.Equal(22, end.Index);
+
+            str = "  Infinity".GetPointer();
+            Assert.Equal(double.PositiveInfinity, strtod(str, out end));
+            Assert.Equal(10, end.Index);
+
+            str = "  +Infinity".GetPointer();
+            Assert.Equal(double.PositiveInfinity, strtod(str, out end));
+            Assert.Equal(11, end.Index);
+
+            str = "  -Infinity".GetPointer();
+            Assert.Equal(double.NegativeInfinity, strtod(str, out end));
+            Assert.Equal(11, end.Index);
+
+            str = "  Information".GetPointer();
+            Assert.Equal(double.PositiveInfinity, strtod(str, out end));
+            Assert.Equal(5, end.Index);
+
+            str = "  +Information".GetPointer();
+            Assert.Equal(double.PositiveInfinity, strtod(str, out end));
+            Assert.Equal(6, end.Index);
+
+            str = "  -Information".GetPointer();
+            Assert.Equal(double.NegativeInfinity, strtod(str, out end));
+            Assert.Equal(6, end.Index);
+
+            str = "  Internet".GetPointer();
+            Assert.Equal(0, strtod(str, out end));
+            Assert.Equal(2, end.Index);
+
+            str = "  NaN".GetPointer();
+            Assert.Equal(double.NaN, strtod(str, out end));
+            Assert.Equal(5, end.Index);
+
+            str = "  NoN".GetPointer();
+            Assert.Equal(0, strtod(str, out end));
+            Assert.Equal(2, end.Index);
+
+            str = "  Test".GetPointer();
+            Assert.Equal(0, strtod(str, out end));
+            Assert.Equal(2, end.Index);
+        }
+    }
+}
