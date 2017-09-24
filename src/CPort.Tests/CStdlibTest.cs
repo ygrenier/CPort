@@ -116,5 +116,87 @@ namespace CPort.Tests
             Assert.Equal(0, strtod(str, out end));
             Assert.Equal(2, end.Index);
         }
+
+        [Fact]
+        public void Catof()
+        {
+            Pointer<char> str = "".GetPointer();
+
+            Assert.Equal(0, atof(NULL));
+
+            Assert.Equal(0, atof(str));
+
+            str = "  ".GetPointer();
+            Assert.Equal(0, atof(str));
+
+            str = "  123.45e+2".GetPointer();
+            Assert.Equal(123.45e+2, atof(str));
+
+            str = "  +123.45e2".GetPointer();
+            Assert.Equal(123.45e+2, atof(str));
+
+            str = "  -123.45".GetPointer();
+            Assert.Equal(-123.45, atof(str));
+
+            str = "  -123.45Test".GetPointer();
+            Assert.Equal(-123.45, atof(str));
+
+            str = "  .45".GetPointer();
+            Assert.Equal(.45, atof(str));
+
+            str = "  .".GetPointer();
+            Assert.Equal(0, atof(str));
+
+            str = "  0D".GetPointer();
+            Assert.Equal(0, atof(str));
+
+            str = "  0xD".GetPointer();
+            Assert.Equal(0xD, atof(str));
+
+            str = "  -0xD".GetPointer();
+            Assert.Equal(-0xD, atof(str));
+
+            str = "  0xZ".GetPointer();
+            Assert.Equal(0, atof(str));
+
+            str = "  0.123".GetPointer();
+            Assert.Equal(0.123, atof(str));
+
+            str = "  0123".GetPointer();
+            Assert.Equal(123, atof(str));
+
+            str = "  01234567890123456789".GetPointer();
+            Assert.Equal(1234567890123456789, atof(str));
+
+            str = "  Infinity".GetPointer();
+            Assert.Equal(double.PositiveInfinity, atof(str));
+
+            str = "  +Infinity".GetPointer();
+            Assert.Equal(double.PositiveInfinity, atof(str));
+
+            str = "  -Infinity".GetPointer();
+            Assert.Equal(double.NegativeInfinity, atof(str));
+
+            str = "  Information".GetPointer();
+            Assert.Equal(double.PositiveInfinity, atof(str));
+
+            str = "  +Information".GetPointer();
+            Assert.Equal(double.PositiveInfinity, atof(str));
+
+            str = "  -Information".GetPointer();
+            Assert.Equal(double.NegativeInfinity, atof(str));
+
+            str = "  Internet".GetPointer();
+            Assert.Equal(0, atof(str));
+
+            str = "  NaN".GetPointer();
+            Assert.Equal(double.NaN, atof(str));
+
+            str = "  NoN".GetPointer();
+            Assert.Equal(0, atof(str));
+
+            str = "  Test".GetPointer();
+            Assert.Equal(0, atof(str));
+        }
     }
 }

@@ -138,6 +138,10 @@ namespace CPort
             return 0;
         }
 
+        /// <summary>
+        /// atof()
+        /// </summary>
+        public static double atof(Pointer<char> s) => strtod(s, out Pointer<char> dummy);
     }
 
 #pragma warning restore IDE1006
