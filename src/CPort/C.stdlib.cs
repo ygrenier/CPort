@@ -58,6 +58,11 @@ namespace CPort
         }
 
         /// <summary>
+        /// Max value returned by <see cref="rand()"/>
+        /// </summary>
+        public const int RAND_MAX = int.MaxValue;
+
+        /// <summary>
         /// strtod()
         /// </summary>
         public static double strtod(Pointer<char> s, out Pointer<char> endp)
@@ -257,6 +262,19 @@ namespace CPort
         /// atol()
         /// </summary>
         public static long atol(Pointer<char> s) => strtol(s, out Pointer<char> dummy, 10);
+
+        static Random _rand = new Random(1);
+
+        /// <summary>
+        /// rand()
+        /// </summary>
+        public static int rand() => _rand.Next(RAND_MAX);
+
+        /// <summary>
+        /// srand()
+        /// </summary>
+        public static void srand(uint seed) => _rand = new Random((int)seed);
+
     }
 
 #pragma warning restore IDE1006

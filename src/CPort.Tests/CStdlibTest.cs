@@ -423,5 +423,30 @@ namespace CPort.Tests
             Assert.Equal(0, atol(str));
         }
 
+        [Fact]
+        public void Random()
+        {
+            srand(1);
+            int r1 = rand();
+            int r2 = rand();
+            int r3 = rand();
+
+            srand(123);
+            int r4 = rand();
+            int r5 = rand();
+            int r6 = rand();
+
+            // random always returns same values from same seed
+            srand(1);
+            Assert.Equal(r1, rand());
+            Assert.Equal(r2, rand());
+            Assert.Equal(r3, rand());
+
+            srand(123);
+            Assert.Equal(r4, rand());
+            Assert.Equal(r5, rand());
+            Assert.Equal(r6, rand());
+        }
+
     }
 }
