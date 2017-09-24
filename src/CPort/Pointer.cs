@@ -10,7 +10,7 @@ namespace CPort
     /// <summary>
     /// C pointer simulator
     /// </summary>
-    public struct Pointer<T> : IEnumerable<T>
+    public struct Pointer<T> : IPointer, IEnumerable<T>
     {
 
         #region Ctors
@@ -94,6 +94,14 @@ namespace CPort
         public static implicit operator Pointer<T>(T[] source)
         {
             return new Pointer<T>(source);
+        }
+
+        /// <summary>
+        /// Implicit conversion from a null pointer
+        /// </summary>
+        public static implicit operator Pointer<T>(NullPointer source)
+        {
+            return new Pointer<T>();
         }
 
         /// <summary>
@@ -304,6 +312,17 @@ namespace CPort
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Common pointer interface
+    /// </summary>
+    public interface IPointer
+    {
+        /// <summary>
+        /// Indicates if the pointer is null
+        /// </summary>
+        bool IsNull { get; }
     }
 
 }

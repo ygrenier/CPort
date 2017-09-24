@@ -1,4 +1,5 @@
-﻿using System;
+﻿using static CPort.C;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -155,6 +156,12 @@ namespace CPort.Tests
             Assert.Null(narray);
             nlist = (List<int>)p;
             Assert.Null(nlist);
+
+            // Cast from NullPointer
+            p = array;
+            Assert.False(p.IsNull);
+            p = NULL;
+            Assert.True(p.IsNull);
         }
 
         [Fact]
