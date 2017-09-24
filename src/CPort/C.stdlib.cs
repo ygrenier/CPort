@@ -247,6 +247,16 @@ namespace CPort
         /// atof()
         /// </summary>
         public static double atof(Pointer<char> s) => strtod(s, out Pointer<char> dummy);
+
+        /// <summary>
+        /// atoi()
+        /// </summary>
+        public static int atoi(Pointer<char> s) => (int)strtol(s, out Pointer<char> dummy, 10);
+
+        /// <summary>
+        /// atol()
+        /// </summary>
+        public static long atol(Pointer<char> s) => strtol(s, out Pointer<char> dummy, 10);
     }
 
 #pragma warning restore IDE1006
