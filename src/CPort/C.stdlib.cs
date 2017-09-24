@@ -13,6 +13,7 @@ namespace CPort
     /// </summary>
     static partial class C
     {
+        const string DigitChars = "0123456789abcdefghijklmnopqrstuvwxyz";
         static Pointer<char> ReadNumber(Pointer<char> p)
         {
             while (isdigit(p.Value)) p++;
@@ -31,13 +32,29 @@ namespace CPort
         }
         static Pointer<char> StartsWith(Pointer<char> s, string value)
         {
-            //if (s.IsNull || s.Value == '\0' || string.IsNullOrEmpty(value)) return NULL;
             foreach (char c in value)
             {
                 if (tolower(s.Value) != tolower(c)) return NULL;
                 s++;
             }
             return s;
+        }
+        static ulong ReadNumber(Pointer<char> p, out Pointer<char> endp, int @base)
+        {
+            string baseChars = DigitChars.Substring(0, @base);
+            ulong result = 0;
+            char c;
+            var pe = p;
+            while ((c = pe.Value) > 0)
+            {
+                int idx = baseChars.IndexOf(tolower(c));
+                if (idx < 0) break;
+                result = (result * (ulong)@base) + (ulong)idx;
+                pe++;
+            }
+            if (pe.Index <= p.Index) { endp = NULL; return 0; }
+            endp = pe;
+            return result;
         }
 
         /// <summary>
@@ -136,6 +153,54 @@ namespace CPort
             }
             endp = ps;
             return 0;
+        }
+
+        /// <summary>
+        /// strtol()
+        /// </summary>
+        public static long strtol(Pointer<char> s, out Pointer<char> endp, int @base)
+        {
+            endp = NULL;
+            if (s.IsNull) return 0;
+            // Trim start
+            var p = s;
+            while (p.Value != '\0' && isspace(p.Value)) p++;
+            if (p.Value == '\0') { endp = p; return 0; }
+            var ps = p;
+            bool positive = true;
+            // + | -
+            if (p.Value == '+') p++;
+            else if (p.Value == '-')
+            {
+                positive = false;
+                p++;
+            }
+            // if base 16 check if start with 0x
+            if (@base == 16)
+            {
+                if (StartsWith(p, "0x") != NULL)
+                    p = p + 2;
+            }
+            // if base 0 then detect base
+            if (@base == 0)
+            {
+                if (p.Value == '0')
+                {
+                    p++;
+                    if (tolower(p.Value) == 'x')
+                    {
+                        p++;
+                        @base = 16;
+                    }
+                    else
+                        @base = 8;
+                }
+                else
+                    @base = 10;
+            }
+            ulong result = ReadNumber(p, out endp, @base);
+            if (endp.IsNull) { endp = ps; return 0; }
+            return positive ? (long)result : -(long)result;
         }
 
         /// <summary>
