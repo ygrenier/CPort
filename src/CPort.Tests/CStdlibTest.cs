@@ -464,5 +464,21 @@ namespace CPort.Tests
             Assert.Equal(123, labs(-123));
         }
 
+        [Fact]
+        public void Cdiv()
+        {
+            var divresult = div(38, 5);
+            Assert.Equal(7, divresult.quot);
+            Assert.Equal(3, divresult.rem);
+        }
+
+        [Fact]
+        public void Cldiv()
+        {
+            var divresult = ldiv(1000000L, 132L);
+            Assert.Equal(7575, divresult.quot);
+            Assert.Equal(100, divresult.rem);
+        }
+
     }
 }

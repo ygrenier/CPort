@@ -285,6 +285,36 @@ namespace CPort
         /// </summary>
         public static long labs(long n) => Math.Abs(n);
 
+        /// <summary>
+        /// div()
+        /// </summary>
+        public static div_t div(int num, int denom) => new div_t
+        {
+            quot = num / denom,
+            rem = num % denom
+        };
+
+        /// <summary>
+        /// ldiv()
+        /// </summary>
+        public static ldiv_t ldiv(long num, long denom) => new ldiv_t
+        {
+            quot = num / denom,
+            rem = num % denom
+        };
+
+    }
+
+    public struct div_t
+    {
+        public int quot;
+        public int rem;
+    }
+
+    public struct ldiv_t
+    {
+        public long quot;
+        public long rem;
     }
 
 #pragma warning restore IDE1006
