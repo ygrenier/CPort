@@ -275,6 +275,16 @@ namespace CPort
         /// </summary>
         public static void srand(uint seed) => _rand = new Random((int)seed);
 
+        /// <summary>
+        /// abs()
+        /// </summary>
+        public static int abs(int n) => Math.Abs(n);
+
+        /// <summary>
+        /// labs()
+        /// </summary>
+        public static long labs(long n) => Math.Abs(n);
+
     }
 
 #pragma warning restore IDE1006

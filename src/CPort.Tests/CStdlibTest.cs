@@ -448,5 +448,21 @@ namespace CPort.Tests
             Assert.Equal(r6, rand());
         }
 
+        [Fact]
+        public void Cabs()
+        {
+            Assert.Equal(0, abs(0));
+            Assert.Equal(123, abs(123));
+            Assert.Equal(123, abs(-123));
+        }
+
+        [Fact]
+        public void Clabs()
+        {
+            Assert.Equal(0, labs(0));
+            Assert.Equal(123, labs(123));
+            Assert.Equal(123, labs(-123));
+        }
+
     }
 }
