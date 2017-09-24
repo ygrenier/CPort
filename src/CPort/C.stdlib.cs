@@ -204,6 +204,46 @@ namespace CPort
         }
 
         /// <summary>
+        /// strtoul()
+        /// </summary>
+        public static ulong strtoul(Pointer<char> s, out Pointer<char> endp, int @base)
+        {
+            endp = NULL;
+            if (s.IsNull) return 0;
+            // Trim start
+            var p = s;
+            while (p.Value != '\0' && isspace(p.Value)) p++;
+            if (p.Value == '\0') { endp = p; return 0; }
+            var ps = p;
+            // if base 16 check if start with 0x
+            if (@base == 16)
+            {
+                if (StartsWith(p, "0x") != NULL)
+                    p = p + 2;
+            }
+            // if base 0 then detect base
+            if (@base == 0)
+            {
+                if (p.Value == '0')
+                {
+                    p++;
+                    if (tolower(p.Value) == 'x')
+                    {
+                        p++;
+                        @base = 16;
+                    }
+                    else
+                        @base = 8;
+                }
+                else
+                    @base = 10;
+            }
+            ulong result = ReadNumber(p, out endp, @base);
+            if (endp.IsNull) { endp = ps; return 0; }
+            return result;
+        }
+
+        /// <summary>
         /// atof()
         /// </summary>
         public static double atof(Pointer<char> s) => strtod(s, out Pointer<char> dummy);
