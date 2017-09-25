@@ -303,6 +303,68 @@ namespace CPort
             rem = num % denom
         };
 
+        /// <summary>
+        /// qsort()
+        /// </summary>
+        public static void qsort<T>(Pointer<T> @base, int n, Func<T, T, int> cmp)
+        {
+            if (n == 0 || @base.IsNull) return;
+            quicksort(@base, 0, n, cmp);
+        }
+        static void quicksort<T>(Pointer<T> @base, int start, int end, Func<T, T, int> cmp)
+        {
+            if (start < end)
+            {
+                int pivot = partition(@base, start, end, cmp);
+                quicksort(@base, start, pivot - 1, cmp);
+                quicksort(@base, pivot + 1, end, cmp);
+            }
+        }
+        static int partition<T>(Pointer<T> @base, int start, int end, Func<T, T, int> cmp)
+        {
+            T pivot = @base[end];
+            int pIndex = start;
+
+            for (int i = start; i < end; i++)
+            {
+                if (cmp(@base[i], pivot) <= 0)
+                {
+                    T temp = @base[i];
+                    @base[i] = @base[pIndex];
+                    @base[pIndex] = temp;
+                    pIndex++;
+                }
+            }
+            T anotherTemp = @base[pIndex];
+            @base[pIndex] = @base[end];
+            @base[end] = anotherTemp;
+            return pIndex;
+        }
+
+        /// <summary>
+        /// bsearch()
+        /// </summary>
+        public static Pointer<T> bsearch<T>(T key, Pointer<T> @base, int n, Func<T, T, int> cmp)
+        {
+            int l = 0;
+            int u = n;
+            int idx = 0;
+            Pointer<T> p;
+            while (l <= u)
+            {
+                idx = (l + u) / 2;
+                p = @base + idx;
+                int comparaison = cmp(key, p.Value);
+                if (comparaison < 0)
+                    u = idx - 1;
+                else if (comparaison > 0)
+                    l = idx + 1;
+                else
+                    return p;
+            }
+            return NULL;
+        }
+
     }
 
     public struct div_t

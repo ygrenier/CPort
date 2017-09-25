@@ -480,5 +480,52 @@ namespace CPort.Tests
             Assert.Equal(100, divresult.rem);
         }
 
+        [Fact]
+        public void Cqsort()
+        {
+            int[] values = { 40, 10, 100, 90, 20, 25 };
+            Func<int, int, int> cmpints = (a, b) => a - b;
+
+            qsort(values, values.Length - 1, cmpints);
+            Assert.Equal(new int[] { 10, 20, 25, 40, 90, 100 }, values);
+        }
+
+        [Fact]
+        public void Cbsearch()
+        {
+            int[] values = { 50, 20, 60, 40, 10, 30 };
+            Func<int, int, int> cmpints = (a, b) => a - b;
+
+            qsort(values, values.Length - 1, cmpints);
+
+            int key = 40;
+            var pItem = bsearch(key, values, values.Length - 1, cmpints);
+            Assert.False(pItem.IsNull);
+            Assert.Equal(3, pItem.Index);
+
+            key = 10;
+            pItem = bsearch(key, values, values.Length - 1, cmpints);
+            Assert.False(pItem.IsNull);
+            Assert.Equal(0, pItem.Index);
+
+            key = 60;
+            pItem = bsearch(key, values, values.Length - 1, cmpints);
+            Assert.False(pItem.IsNull);
+            Assert.Equal(5, pItem.Index);
+
+            key = 4;
+            pItem = bsearch(key, values, values.Length - 1, cmpints);
+            Assert.True(pItem.IsNull);
+
+            key = 55;
+            pItem = bsearch(key, values, values.Length - 1, cmpints);
+            Assert.True(pItem.IsNull);
+
+            key = 400;
+            pItem = bsearch(key, values, values.Length - 1, cmpints);
+            Assert.True(pItem.IsNull);
+
+        }
+
     }
 }
