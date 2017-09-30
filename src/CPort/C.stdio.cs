@@ -51,10 +51,10 @@ namespace CPort
             CFileMode fMode = ExtractFileMode(mode);
 
             // Open file from host
-            var stream = C.SystemHost.OpenFile(filename.GetString(), fMode);
+            var stream = SystemHost.OpenFile(filename.GetString(), fMode, out Encoding enc);
             if (stream == null) return null;
 
-            return new FILE(stream, fMode);
+            return new FILE(stream, fMode, enc ?? SystemHost.DefaultFileEncoding);
         }
 
         /// <summary>
@@ -68,10 +68,10 @@ namespace CPort
             CFileMode fMode = ExtractFileMode(mode);
 
             // Reopen file from host
-            var s = C.SystemHost.OpenFile(filename.GetString(), fMode);
+            var s = C.SystemHost.OpenFile(filename.GetString(), fMode, out Encoding enc);
             if (s == null) return null;
 
-            stream.Reopen(s, fMode);
+            stream.Reopen(s, fMode, enc ?? SystemHost.DefaultFileEncoding);
             return stream;
         }
 

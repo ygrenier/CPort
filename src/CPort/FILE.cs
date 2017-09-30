@@ -15,9 +15,10 @@ namespace CPort
         /// <summary>
         /// Open a file
         /// </summary>
-        public FILE(Stream source, CFileMode mode)
+        public FILE(Stream source, CFileMode mode, Encoding encoding)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
+            Encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
             Mode = mode;
         }
 
@@ -28,17 +29,18 @@ namespace CPort
         {
             Source?.Dispose();
             Source = null;
+            Encoding = null;
             Mode = null;
         }
 
         /// <summary>
         /// Reopen the file
         /// </summary>
-        public void Reopen(Stream source, CFileMode mode)
+        public void Reopen(Stream source, CFileMode mode, Encoding encoding)
         {
-            if(source==null) throw new ArgumentNullException(nameof(source)); 
-            if (Source != null) Source.Dispose();
-            Source = source;
+            if (Source != null) Dispose();
+            Source = source ?? throw new ArgumentNullException(nameof(source));
+            Encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
             Mode = mode;
         }
 
@@ -46,6 +48,11 @@ namespace CPort
         /// Source of file
         /// </summary>
         public Stream Source { get; private set; }
+
+        /// <summary>
+        /// Encoding
+        /// </summary>
+        public Encoding Encoding { get; private set; }
 
         /// <summary>
         /// File mode

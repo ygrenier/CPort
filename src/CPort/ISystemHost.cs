@@ -13,6 +13,11 @@ namespace CPort
         /// <summary>
         /// Open a file
         /// </summary>
-        Stream OpenFile(string filename, CFileMode fMode);
+        Stream OpenFile(string filename, CFileMode fMode, out Encoding encoding);
+
+        /// <summary>
+        /// Current default encoding for files
+        /// </summary>
+        Encoding DefaultFileEncoding { get; }
     }
 }
