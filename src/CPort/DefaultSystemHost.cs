@@ -21,11 +21,8 @@ namespace CPort
         /// <summary>
         /// Open a file
         /// </summary>
-        public virtual Stream OpenFile(string filename, CFileMode fMode, out Encoding encoding)
-        {
-            encoding = null;
-            return null;
-        }
+        public virtual Tuple<Stream, Encoding> OpenFile(string filename, CFileMode fMode)
+            => null;
 
         /// <summary>
         /// Current default encoding for files

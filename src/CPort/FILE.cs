@@ -18,7 +18,7 @@ namespace CPort
         public FILE(Stream source, CFileMode mode, Encoding encoding)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
-            Encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
+            Encoding = mode.HasFlag(CFileMode.Binary) ? encoding : encoding ?? throw new ArgumentNullException(nameof(encoding));
             Mode = mode;
         }
 
@@ -40,7 +40,7 @@ namespace CPort
         {
             if (Source != null) Dispose();
             Source = source ?? throw new ArgumentNullException(nameof(source));
-            Encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
+            Encoding = mode.HasFlag(CFileMode.Binary) ? encoding : encoding ?? throw new ArgumentNullException(nameof(encoding));
             Mode = mode;
         }
 

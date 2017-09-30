@@ -25,18 +25,20 @@ namespace CPort
             {
                 case 'w':
                     fMode = CFileMode.Write;
+                    mode++;
                     break;
                 case 'a':
                     fMode = CFileMode.Append;
+                    mode++;
                     break;
                 case 'r':
                 default:
                     fMode = CFileMode.Read;
+                    mode++;
                     break;
             }
-            mode++;
-            if (mode++ == '+') fMode |= CFileMode.Update;
-            if (mode++ == 'b') fMode |= CFileMode.Binary;
+            if (mode == '+') { fMode |= CFileMode.Update; mode++; }
+            if (mode == 'b') { fMode |= CFileMode.Binary; mode++; }
             return fMode;
         }
 
@@ -51,10 +53,10 @@ namespace CPort
             CFileMode fMode = ExtractFileMode(mode);
 
             // Open file from host
-            var stream = SystemHost.OpenFile(filename.GetString(), fMode, out Encoding enc);
-            if (stream == null) return null;
+            var res = SystemHost.OpenFile(filename.GetString(), fMode);
+            if (res?.Item1 == null) return null;
 
-            return new FILE(stream, fMode, enc ?? SystemHost.DefaultFileEncoding);
+            return new FILE(res.Item1, fMode, res.Item2 ?? SystemHost.DefaultFileEncoding);
         }
 
         /// <summary>
@@ -68,10 +70,10 @@ namespace CPort
             CFileMode fMode = ExtractFileMode(mode);
 
             // Reopen file from host
-            var s = C.SystemHost.OpenFile(filename.GetString(), fMode, out Encoding enc);
-            if (s == null) return null;
+            var res = SystemHost.OpenFile(filename.GetString(), fMode);
+            if (res?.Item1 == null) return null;
 
-            stream.Reopen(s, fMode, enc ?? SystemHost.DefaultFileEncoding);
+            stream.Reopen(res.Item1, fMode, res.Item2 ?? SystemHost.DefaultFileEncoding);
             return stream;
         }
 
@@ -80,7 +82,7 @@ namespace CPort
         /// </summary>
         public static int fclose(FILE file)
         {
-            if (file == null) return EOF;
+            if (file == null || file.Source == null) return EOF;
             file.Dispose();
             return 0;
         }
