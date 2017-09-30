@@ -87,6 +87,15 @@ namespace CPort
             return 0;
         }
 
+        /// <summary>
+        /// fflush()
+        /// </summary>
+        public static int fflush(FILE file)
+        {
+            if (file?.Source == null) return EOF;
+            file.Source.Flush();
+            return 0;
+        }
     }
 #pragma warning restore IDE1006
 }

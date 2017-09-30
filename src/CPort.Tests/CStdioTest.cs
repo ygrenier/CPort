@@ -88,5 +88,16 @@ namespace CPort.Tests
             Assert.Equal(EOF, fclose(null));
         }
 
+        [Fact]
+        public void Fflush()
+        {
+            var file = new FILE(new MemoryStream(new byte[] { 1, 2, 3 }), CFileMode.Read, Encoding.ASCII);
+            Assert.Equal(0, fflush(file));
+            file.Dispose();
+            Assert.Equal(EOF, fflush(file));
+            file = null;
+            Assert.Equal(EOF, fflush(file));
+        }
+
     }
 }
