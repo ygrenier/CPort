@@ -17,7 +17,7 @@ namespace CPort
         /// <param name="s">Destination string</param>
         /// <param name="ct">Source string</param>
         /// <returns>returns <paramref name="s"/></returns>
-        public static Pointer<char> strcpy(Pointer<char> s, Pointer<char> ct)
+        public static PChar strcpy(PChar s, PChar ct)
         {
             var sd = s;
             var ss = ct;
@@ -38,7 +38,7 @@ namespace CPort
         /// <param name="ct">Source string</param>
         /// <param name="n">Count of characters to copy</param>
         /// <returns>returns <paramref name="s"/></returns>
-        public static Pointer<char> strncpy(Pointer<char> s, Pointer<char> ct, int n)
+        public static PChar strncpy(PChar s, PChar ct, int n)
         {
             var sd = s;
             var ss = ct;
@@ -64,7 +64,7 @@ namespace CPort
         /// <param name="s">Destination string</param>
         /// <param name="ct">Source string</param>
         /// <returns>returns <paramref name="s"/></returns>
-        public static Pointer<char> strcat(Pointer<char> s, Pointer<char> ct)
+        public static PChar strcat(PChar s, PChar ct)
         {
             var sd = s;
             // Go to end
@@ -81,7 +81,7 @@ namespace CPort
         /// <param name="ct">Source string</param>
         /// <param name="n">Count of characters to concat</param>
         /// <returns>returns <paramref name="s"/></returns>
-        public static Pointer<char> strncat(Pointer<char> s, Pointer<char> ct, int n)
+        public static PChar strncat(PChar s, PChar ct, int n)
         {
             var sd = s;
             // Go to end
@@ -95,7 +95,7 @@ namespace CPort
         /// <summary>
         /// strcmp()
         /// </summary>
-        public static int strcmp(Pointer<char> cs, Pointer<char> ct)
+        public static int strcmp(PChar cs, PChar ct)
         {
             char ccs, cct;
             do
@@ -112,7 +112,7 @@ namespace CPort
         /// <summary>
         /// strncmp()
         /// </summary>
-        public static int strncmp(Pointer<char> cs, Pointer<char> ct, int n)
+        public static int strncmp(PChar cs, PChar ct, int n)
         {
             char ccs, cct;
             do
@@ -129,7 +129,7 @@ namespace CPort
         /// <summary>
         /// strchr()
         /// </summary>
-        public static Pointer<char> strchr(Pointer<char> cs, char c)
+        public static PChar strchr(PChar cs, char c)
         {
             char ccs;
             while ((ccs = cs.Value) > 0)
@@ -137,15 +137,15 @@ namespace CPort
                 if (ccs == c) return cs;
                 cs++;
             }
-            return new Pointer<char>();
+            return new PChar();
         }
 
         /// <summary>
         /// strrchr()
         /// </summary>
-        public static Pointer<char> strrchr(Pointer<char> cs, char c)
+        public static PChar strrchr(PChar cs, char c)
         {
-            var result = new Pointer<char>();
+            var result = new PChar();
             char ccs;
             while ((ccs = cs.Value) > 0)
             {
@@ -158,7 +158,7 @@ namespace CPort
         /// <summary>
         /// strspn()
         /// </summary>
-        public static int strspn(Pointer<char> cs, Pointer<char> ct)
+        public static int strspn(PChar cs, PChar ct)
         {
             int cnt = 0;
             char c;
@@ -174,7 +174,7 @@ namespace CPort
         /// <summary>
         /// strcspn()
         /// </summary>
-        public static int strcspn(Pointer<char> cs, Pointer<char> ct)
+        public static int strcspn(PChar cs, PChar ct)
         {
             int cnt = 0;
             char c;
@@ -190,7 +190,7 @@ namespace CPort
         /// <summary>
         /// strpbrk()
         /// </summary>
-        public static Pointer<char> strpbrk(Pointer<char> cs, Pointer<char> ct)
+        public static PChar strpbrk(PChar cs, PChar ct)
         {
             char c;
             while ((c = cs.Value) > 0)
@@ -199,16 +199,16 @@ namespace CPort
                     return cs;
                 cs++;
             }
-            return new Pointer<char>();
+            return new PChar();
         }
 
         /// <summary>
         /// strstr()
         /// </summary>
-        public static Pointer<char> strstr(Pointer<char> cs, Pointer<char> ct)
+        public static PChar strstr(PChar cs, PChar ct)
         {
             // If ct is empty then stop here because we never found an empty string
-            if (ct.IsNull || ct.Value == 0) return new Pointer<char>();
+            if (ct.IsNull || ct.Value == 0) return new PChar();
             char c;
             while ((c = cs.Value) > 0)
             {
@@ -220,13 +220,13 @@ namespace CPort
                 if (crt == 0) return cs;
                 cs++;
             }
-            return new Pointer<char>();
+            return new PChar();
         }
 
         /// <summary>
         /// strlen()
         /// </summary>
-        public static int strlen(Pointer<char> cs)
+        public static int strlen(PChar cs)
         {
             if (cs.IsNull) return 0;
             int count = 0;
@@ -238,19 +238,19 @@ namespace CPort
             return count;
         }
 
-        static Pointer<char>? _strtokCurrent = null;
+        static PChar? _strtokCurrent = null;
 
         /// <summary>
         /// strtok()
         /// </summary>
-        public static Pointer<char> strtok(Pointer<char>? s, Pointer<char> delimiters)
+        public static PChar strtok(PChar? s, PChar delimiters)
         {
             // If s is defined, reset the strtok process
             if (s != null && !s.Value.IsNull)
                 _strtokCurrent = s;
             // If current strtok pointer is null, stop here
             if (_strtokCurrent == null || _strtokCurrent.Value.IsNull)
-                return new Pointer<char>();
+                return new PChar();
             // Pass the delimiters
             var p = _strtokCurrent.Value;
             while (p.Value > 0 && !strchr(delimiters, p.Value).IsNull) p++;
@@ -262,7 +262,7 @@ namespace CPort
                 _strtokCurrent = p + 1;
                 return start;
             }
-            return new Pointer<char>();
+            return new PChar();
         }
 
     }

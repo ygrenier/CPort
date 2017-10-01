@@ -11,8 +11,8 @@ namespace CPort.Tests
         [Fact]
         public void Cstrtod()
         {
-            Pointer<char> end = NULL;
-            Pointer<char> str = "".GetPointer();
+            PChar end = NULL;
+            PChar str = "";
 
             Assert.Equal(0, strtod(NULL, out end));
             Assert.True(NULL == end);
@@ -20,99 +20,99 @@ namespace CPort.Tests
             Assert.Equal(0, strtod(str, out end));
             Assert.True(str == end);
 
-            str = "  ".GetPointer();
+            str = "  ";
             Assert.Equal(0, strtod(str, out end));
             Assert.Equal(2, end.Index);
 
-            str = "  123.45e+2".GetPointer();
+            str = "  123.45e+2";
             Assert.Equal(123.45e+2, strtod(str, out end));
             Assert.Equal(11, end.Index);
 
-            str = "  +123.45e2".GetPointer();
+            str = "  +123.45e2";
             Assert.Equal(123.45e+2, strtod(str, out end));
             Assert.Equal(11, end.Index);
 
-            str = "  -123.45".GetPointer();
+            str = "  -123.45";
             Assert.Equal(-123.45, strtod(str, out end));
             Assert.Equal(9, end.Index);
 
-            str = "  -123.45Test".GetPointer();
+            str = "  -123.45Test";
             Assert.Equal(-123.45, strtod(str, out end));
             Assert.Equal(9, end.Index);
 
-            str = "  .45".GetPointer();
+            str = "  .45";
             Assert.Equal(.45, strtod(str, out end));
             Assert.Equal(5, end.Index);
 
-            str = "  .".GetPointer();
+            str = "  .";
             Assert.Equal(0, strtod(str, out end));
             Assert.Equal(2, end.Index);
 
-            str = "  0D".GetPointer();
+            str = "  0D";
             Assert.Equal(0, strtod(str, out end));
             Assert.Equal(3, end.Index);
 
-            str = "  0xD".GetPointer();
+            str = "  0xD";
             Assert.Equal(0xD, strtod(str, out end));
             Assert.Equal(5, end.Index);
 
-            str = "  -0xD".GetPointer();
+            str = "  -0xD";
             Assert.Equal(-0xD, strtod(str, out end));
             Assert.Equal(6, end.Index);
 
-            str = "  0xZ".GetPointer();
+            str = "  0xZ";
             Assert.Equal(0, strtod(str, out end));
             Assert.Equal(3, end.Index);
 
-            str = "  0.123".GetPointer();
+            str = "  0.123";
             Assert.Equal(0.123, strtod(str, out end));
             Assert.Equal(7, end.Index);
 
-            str = "  0123".GetPointer();
+            str = "  0123";
             Assert.Equal(123, strtod(str, out end));
             Assert.Equal(6, end.Index);
 
-            str = "  01234567890123456789".GetPointer();
+            str = "  01234567890123456789";
             Assert.Equal(1234567890123456789, strtod(str, out end));
             Assert.Equal(22, end.Index);
 
-            str = "  Infinity".GetPointer();
+            str = "  Infinity";
             Assert.Equal(double.PositiveInfinity, strtod(str, out end));
             Assert.Equal(10, end.Index);
 
-            str = "  +Infinity".GetPointer();
+            str = "  +Infinity";
             Assert.Equal(double.PositiveInfinity, strtod(str, out end));
             Assert.Equal(11, end.Index);
 
-            str = "  -Infinity".GetPointer();
+            str = "  -Infinity";
             Assert.Equal(double.NegativeInfinity, strtod(str, out end));
             Assert.Equal(11, end.Index);
 
-            str = "  Information".GetPointer();
+            str = "  Information";
             Assert.Equal(double.PositiveInfinity, strtod(str, out end));
             Assert.Equal(5, end.Index);
 
-            str = "  +Information".GetPointer();
+            str = "  +Information";
             Assert.Equal(double.PositiveInfinity, strtod(str, out end));
             Assert.Equal(6, end.Index);
 
-            str = "  -Information".GetPointer();
+            str = "  -Information";
             Assert.Equal(double.NegativeInfinity, strtod(str, out end));
             Assert.Equal(6, end.Index);
 
-            str = "  Internet".GetPointer();
+            str = "  Internet";
             Assert.Equal(0, strtod(str, out end));
             Assert.Equal(2, end.Index);
 
-            str = "  NaN".GetPointer();
+            str = "  NaN";
             Assert.Equal(double.NaN, strtod(str, out end));
             Assert.Equal(5, end.Index);
 
-            str = "  NoN".GetPointer();
+            str = "  NoN";
             Assert.Equal(0, strtod(str, out end));
             Assert.Equal(2, end.Index);
 
-            str = "  Test".GetPointer();
+            str = "  Test";
             Assert.Equal(0, strtod(str, out end));
             Assert.Equal(2, end.Index);
         }
@@ -120,90 +120,90 @@ namespace CPort.Tests
         [Fact]
         public void Catof()
         {
-            Pointer<char> str = "".GetPointer();
+            PChar str = "";
 
             Assert.Equal(0, atof(NULL));
 
             Assert.Equal(0, atof(str));
 
-            str = "  ".GetPointer();
+            str = "  ";
             Assert.Equal(0, atof(str));
 
-            str = "  123.45e+2".GetPointer();
+            str = "  123.45e+2";
             Assert.Equal(123.45e+2, atof(str));
 
-            str = "  +123.45e2".GetPointer();
+            str = "  +123.45e2";
             Assert.Equal(123.45e+2, atof(str));
 
-            str = "  -123.45".GetPointer();
+            str = "  -123.45";
             Assert.Equal(-123.45, atof(str));
 
-            str = "  -123.45Test".GetPointer();
+            str = "  -123.45Test";
             Assert.Equal(-123.45, atof(str));
 
-            str = "  .45".GetPointer();
+            str = "  .45";
             Assert.Equal(.45, atof(str));
 
-            str = "  .".GetPointer();
+            str = "  .";
             Assert.Equal(0, atof(str));
 
-            str = "  0D".GetPointer();
+            str = "  0D";
             Assert.Equal(0, atof(str));
 
-            str = "  0xD".GetPointer();
+            str = "  0xD";
             Assert.Equal(0xD, atof(str));
 
-            str = "  -0xD".GetPointer();
+            str = "  -0xD";
             Assert.Equal(-0xD, atof(str));
 
-            str = "  0xZ".GetPointer();
+            str = "  0xZ";
             Assert.Equal(0, atof(str));
 
-            str = "  0.123".GetPointer();
+            str = "  0.123";
             Assert.Equal(0.123, atof(str));
 
-            str = "  0123".GetPointer();
+            str = "  0123";
             Assert.Equal(123, atof(str));
 
-            str = "  01234567890123456789".GetPointer();
+            str = "  01234567890123456789";
             Assert.Equal(1234567890123456789, atof(str));
 
-            str = "  Infinity".GetPointer();
+            str = "  Infinity";
             Assert.Equal(double.PositiveInfinity, atof(str));
 
-            str = "  +Infinity".GetPointer();
+            str = "  +Infinity";
             Assert.Equal(double.PositiveInfinity, atof(str));
 
-            str = "  -Infinity".GetPointer();
+            str = "  -Infinity";
             Assert.Equal(double.NegativeInfinity, atof(str));
 
-            str = "  Information".GetPointer();
+            str = "  Information";
             Assert.Equal(double.PositiveInfinity, atof(str));
 
-            str = "  +Information".GetPointer();
+            str = "  +Information";
             Assert.Equal(double.PositiveInfinity, atof(str));
 
-            str = "  -Information".GetPointer();
+            str = "  -Information";
             Assert.Equal(double.NegativeInfinity, atof(str));
 
-            str = "  Internet".GetPointer();
+            str = "  Internet";
             Assert.Equal(0, atof(str));
 
-            str = "  NaN".GetPointer();
+            str = "  NaN";
             Assert.Equal(double.NaN, atof(str));
 
-            str = "  NoN".GetPointer();
+            str = "  NoN";
             Assert.Equal(0, atof(str));
 
-            str = "  Test".GetPointer();
+            str = "  Test";
             Assert.Equal(0, atof(str));
         }
 
         [Fact]
         public void Cstrtol()
         {
-            Pointer<char> end = NULL;
-            Pointer<char> str = "".GetPointer();
+            PChar end = NULL;
+            PChar str = "";
 
             Assert.Equal(0, strtol(NULL, out end, 0));
             Assert.True(NULL == end);
@@ -211,55 +211,55 @@ namespace CPort.Tests
             Assert.Equal(0, strtol(str, out end, 0));
             Assert.True(str == end);
 
-            str = "  ".GetPointer();
+            str = "  ";
             Assert.Equal(0, strtol(str, out end, 0));
             Assert.Equal(2, end.Index);
 
-            str = "  123.45e+2".GetPointer();
+            str = "  123.45e+2";
             Assert.Equal(123, strtol(str, out end, 0));
             Assert.Equal(5, end.Index);
 
-            str = "  +123.45e2".GetPointer();
+            str = "  +123.45e2";
             Assert.Equal(123, strtol(str, out end, 0));
             Assert.Equal(6, end.Index);
 
-            str = "  -123.45".GetPointer();
+            str = "  -123.45";
             Assert.Equal(-123, strtol(str, out end, 0));
             Assert.Equal(6, end.Index);
 
-            str = "  0123".GetPointer();
+            str = "  0123";
             Assert.Equal(83, strtol(str, out end, 0));
             Assert.Equal(6, end.Index);
 
-            str = "  0xD".GetPointer();
+            str = "  0xD";
             Assert.Equal(0xD, strtol(str, out end, 0));
             Assert.Equal(5, end.Index);
 
-            str = "  0xDz".GetPointer();
+            str = "  0xDz";
             Assert.Equal(0xD, strtol(str, out end, 16));
             Assert.Equal(5, end.Index);
 
-            str = "  Dz".GetPointer();
+            str = "  Dz";
             Assert.Equal(0xD, strtol(str, out end, 16));
             Assert.Equal(3, end.Index);
 
-            str = "  0x".GetPointer();
+            str = "  0x";
             Assert.Equal(0, strtol(str, out end, 16));
             Assert.Equal(2, end.Index);
 
-            str = "  148".GetPointer();
+            str = "  148";
             Assert.Equal(12, strtol(str, out end, 8));
             Assert.Equal(4, end.Index);
 
-            str = "  Infinity".GetPointer();
+            str = "  Infinity";
             Assert.Equal(0, strtol(str, out end, 8));
             Assert.Equal(2, end.Index);
 
-            str = "  Infinity".GetPointer();
+            str = "  Infinity";
             Assert.Equal(1461559270678, strtol(str, out end, 36));
             Assert.Equal(10, end.Index);
 
-            str = "  -INFINITY".GetPointer();
+            str = "  -INFINITY";
             Assert.Equal(-1461559270678, strtol(str, out end, 36));
             Assert.Equal(11, end.Index);
         }
@@ -267,8 +267,8 @@ namespace CPort.Tests
         [Fact]
         public void Cstrtoul()
         {
-            Pointer<char> end = NULL;
-            Pointer<char> str = "".GetPointer();
+            PChar end = NULL;
+            PChar str = "";
 
             Assert.Equal(0u, strtoul(NULL, out end, 0));
             Assert.True(NULL == end);
@@ -276,51 +276,51 @@ namespace CPort.Tests
             Assert.Equal(0u, strtoul(str, out end, 0));
             Assert.True(str == end);
 
-            str = "  ".GetPointer();
+            str = "  ";
             Assert.Equal(0u, strtoul(str, out end, 0));
             Assert.Equal(2, end.Index);
 
-            str = "  123.45e+2".GetPointer();
+            str = "  123.45e+2";
             Assert.Equal(123u, strtoul(str, out end, 0));
             Assert.Equal(5, end.Index);
 
-            str = "  +123.45e2".GetPointer();
+            str = "  +123.45e2";
             Assert.Equal(0u, strtoul(str, out end, 0));
             Assert.Equal(2, end.Index);
 
-            str = "  -123.45".GetPointer();
+            str = "  -123.45";
             Assert.Equal(0u, strtoul(str, out end, 0));
             Assert.Equal(2, end.Index);
 
-            str = "  0123".GetPointer();
+            str = "  0123";
             Assert.Equal(83u, strtoul(str, out end, 0));
             Assert.Equal(6, end.Index);
 
-            str = "  0xD".GetPointer();
+            str = "  0xD";
             Assert.Equal(0xDu, strtoul(str, out end, 0));
             Assert.Equal(5, end.Index);
 
-            str = "  0xDz".GetPointer();
+            str = "  0xDz";
             Assert.Equal(0xDu, strtoul(str, out end, 16));
             Assert.Equal(5, end.Index);
 
-            str = "  Dz".GetPointer();
+            str = "  Dz";
             Assert.Equal(0xDu, strtoul(str, out end, 16));
             Assert.Equal(3, end.Index);
 
-            str = "  0x".GetPointer();
+            str = "  0x";
             Assert.Equal(0u, strtoul(str, out end, 16));
             Assert.Equal(2, end.Index);
 
-            str = "  148".GetPointer();
+            str = "  148";
             Assert.Equal(12u, strtoul(str, out end, 8));
             Assert.Equal(4, end.Index);
 
-            str = "  Infinity".GetPointer();
+            str = "  Infinity";
             Assert.Equal(0u, strtoul(str, out end, 8));
             Assert.Equal(2, end.Index);
 
-            str = "  Infinity".GetPointer();
+            str = "  Infinity";
             Assert.Equal(1461559270678u, strtoul(str, out end, 36));
             Assert.Equal(10, end.Index);
         }
@@ -328,98 +328,98 @@ namespace CPort.Tests
         [Fact]
         public void Catoi()
         {
-            Pointer<char> str = "".GetPointer();
+            PChar str = "";
 
             Assert.Equal(0, atoi(NULL));
 
             Assert.Equal(0, atoi(str));
 
-            str = "  ".GetPointer();
+            str = "  ";
             Assert.Equal(0, atoi(str));
 
-            str = "  123.45e+2".GetPointer();
+            str = "  123.45e+2";
             Assert.Equal(123, atoi(str));
 
-            str = "  +123.45e2".GetPointer();
+            str = "  +123.45e2";
             Assert.Equal(123, atoi(str));
 
-            str = "  -123.45".GetPointer();
+            str = "  -123.45";
             Assert.Equal(-123, atoi(str));
 
-            str = "  0123".GetPointer();
+            str = "  0123";
             Assert.Equal(123, atoi(str));
 
-            str = "  0xD".GetPointer();
+            str = "  0xD";
             Assert.Equal(0, atoi(str));
 
-            str = "  0xDz".GetPointer();
+            str = "  0xDz";
             Assert.Equal(0, atoi(str));
 
-            str = "  Dz".GetPointer();
+            str = "  Dz";
             Assert.Equal(0, atoi(str));
 
-            str = "  0x".GetPointer();
+            str = "  0x";
             Assert.Equal(0, atoi(str));
 
-            str = "  148".GetPointer();
+            str = "  148";
             Assert.Equal(148, atoi(str));
 
-            str = "  Infinity".GetPointer();
+            str = "  Infinity";
             Assert.Equal(0, atoi(str));
 
-            str = "  Infinity".GetPointer();
+            str = "  Infinity";
             Assert.Equal(0, atoi(str));
 
-            str = "  -INFINITY".GetPointer();
+            str = "  -INFINITY";
             Assert.Equal(0, atoi(str));
         }
 
         [Fact]
         public void Catol()
         {
-            Pointer<char> str = "".GetPointer();
+            PChar str = "";
 
             Assert.Equal(0, atol(NULL));
 
             Assert.Equal(0, atol(str));
 
-            str = "  ".GetPointer();
+            str = "  ";
             Assert.Equal(0, atol(str));
 
-            str = "  123.45e+2".GetPointer();
+            str = "  123.45e+2";
             Assert.Equal(123, atol(str));
 
-            str = "  +123.45e2".GetPointer();
+            str = "  +123.45e2";
             Assert.Equal(123, atol(str));
 
-            str = "  -123.45".GetPointer();
+            str = "  -123.45";
             Assert.Equal(-123, atol(str));
 
-            str = "  0123".GetPointer();
+            str = "  0123";
             Assert.Equal(123, atol(str));
 
-            str = "  0xD".GetPointer();
+            str = "  0xD";
             Assert.Equal(0, atol(str));
 
-            str = "  0xDz".GetPointer();
+            str = "  0xDz";
             Assert.Equal(0, atol(str));
 
-            str = "  Dz".GetPointer();
+            str = "  Dz";
             Assert.Equal(0, atol(str));
 
-            str = "  0x".GetPointer();
+            str = "  0x";
             Assert.Equal(0, atol(str));
 
-            str = "  148".GetPointer();
+            str = "  148";
             Assert.Equal(148, atol(str));
 
-            str = "  Infinity".GetPointer();
+            str = "  Infinity";
             Assert.Equal(0, atol(str));
 
-            str = "  Infinity".GetPointer();
+            str = "  Infinity";
             Assert.Equal(0, atol(str));
 
-            str = "  -INFINITY".GetPointer();
+            str = "  -INFINITY";
             Assert.Equal(0, atol(str));
         }
 

@@ -18,7 +18,7 @@ namespace CPort
         /// <summary>
         /// Extract file mode
         /// </summary>
-        private static CFileMode ExtractFileMode(Pointer<char> mode)
+        private static CFileMode ExtractFileMode(PChar mode)
         {
             CFileMode fMode = CFileMode.Read;
             switch (mode.Value)
@@ -45,7 +45,7 @@ namespace CPort
         /// <summary>
         /// fopen()
         /// </summary>
-        public static FILE fopen(Pointer<char> filename, Pointer<char> mode)
+        public static FILE fopen(PChar filename, PChar mode)
         {
             if (filename == NULL || mode == NULL) return null;
 
@@ -62,7 +62,7 @@ namespace CPort
         /// <summary>
         /// freopen()
         /// </summary>
-        public static FILE freopen(Pointer<char> filename, Pointer<char> mode, FILE stream)
+        public static FILE freopen(PChar filename, PChar mode, FILE stream)
         {
             if (filename == NULL || mode == NULL || stream == null) return null;
 

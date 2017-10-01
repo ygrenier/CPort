@@ -14,7 +14,7 @@ namespace CPort
     static partial class C
     {
         const string DigitChars = "0123456789abcdefghijklmnopqrstuvwxyz";
-        static Pointer<char> ReadNumber(Pointer<char> p)
+        static PChar ReadNumber(PChar p)
         {
             while (isdigit(p.Value)) p++;
             if (p.Value == '.')
@@ -30,7 +30,7 @@ namespace CPort
             }
             return p;
         }
-        static Pointer<char> StartsWith(Pointer<char> s, string value)
+        static PChar StartsWith(PChar s, string value)
         {
             foreach (char c in value)
             {
@@ -39,7 +39,7 @@ namespace CPort
             }
             return s;
         }
-        static ulong ReadNumber(Pointer<char> p, out Pointer<char> endp, int @base)
+        static ulong ReadNumber(PChar p, out PChar endp, int @base)
         {
             string baseChars = DigitChars.Substring(0, @base);
             ulong result = 0;
@@ -65,7 +65,7 @@ namespace CPort
         /// <summary>
         /// strtod()
         /// </summary>
-        public static double strtod(Pointer<char> s, out Pointer<char> endp)
+        public static double strtod(PChar s, out PChar endp)
         {
             endp = NULL;
             if (s.IsNull) return 0;
@@ -163,7 +163,7 @@ namespace CPort
         /// <summary>
         /// strtol()
         /// </summary>
-        public static long strtol(Pointer<char> s, out Pointer<char> endp, int @base)
+        public static long strtol(PChar s, out PChar endp, int @base)
         {
             endp = NULL;
             if (s.IsNull) return 0;
@@ -211,7 +211,7 @@ namespace CPort
         /// <summary>
         /// strtoul()
         /// </summary>
-        public static ulong strtoul(Pointer<char> s, out Pointer<char> endp, int @base)
+        public static ulong strtoul(PChar s, out PChar endp, int @base)
         {
             endp = NULL;
             if (s.IsNull) return 0;
@@ -251,17 +251,17 @@ namespace CPort
         /// <summary>
         /// atof()
         /// </summary>
-        public static double atof(Pointer<char> s) => strtod(s, out Pointer<char> dummy);
+        public static double atof(PChar s) => strtod(s, out PChar dummy);
 
         /// <summary>
         /// atoi()
         /// </summary>
-        public static int atoi(Pointer<char> s) => (int)strtol(s, out Pointer<char> dummy, 10);
+        public static int atoi(PChar s) => (int)strtol(s, out PChar dummy, 10);
 
         /// <summary>
         /// atol()
         /// </summary>
-        public static long atol(Pointer<char> s) => strtol(s, out Pointer<char> dummy, 10);
+        public static long atol(PChar s) => strtol(s, out PChar dummy, 10);
 
         static Random _rand = new Random(1);
 

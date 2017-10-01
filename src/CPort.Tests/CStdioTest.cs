@@ -15,16 +15,16 @@ namespace CPort.Tests
         public void Fopen()
         {
             C.SetSystemHost(null);
-            Assert.Null(fopen("file".GetPointer(), "r".GetPointer()));
-            Assert.Null(fopen(NULL, "r".GetPointer()));
-            Assert.Null(fopen("file".GetPointer(), NULL));
+            Assert.Null(fopen("file", "r"));
+            Assert.Null(fopen(NULL, "r"));
+            Assert.Null(fopen("file", NULL));
 
             var mHost = new Mock<ISystemHost>();
             mHost.Setup(h => h.OpenFile(It.IsAny<string>(), It.IsAny<CFileMode>()))
                 .Returns(() => Tuple.Create<Stream, Encoding>(new MemoryStream(), Encoding.ASCII));
             C.SetSystemHost(mHost.Object);
 
-            var file = fopen("file".GetPointer(), "w".GetPointer());
+            var file = fopen("file", "w");
             Assert.NotNull(file);
             Assert.IsType<MemoryStream>(file.Source);
             Assert.Same(Encoding.ASCII, file.Encoding);
@@ -34,7 +34,7 @@ namespace CPort.Tests
                 .Returns(() => Tuple.Create<Stream, Encoding>(new MemoryStream(), null));
             mHost.SetupGet(h => h.DefaultFileEncoding).Returns(Encoding.UTF8);
             C.SetSystemHost(mHost.Object);
-            file = fopen("file".GetPointer(), "a".GetPointer());
+            file = fopen("file", "a");
             Assert.NotNull(file);
             Assert.IsType<MemoryStream>(file.Source);
             Assert.Same(Encoding.UTF8, file.Encoding);
@@ -49,13 +49,13 @@ namespace CPort.Tests
                 .Returns(() => Tuple.Create<Stream, Encoding>(new MemoryStream(), Encoding.ASCII));
             C.SetSystemHost(mHost.Object);
 
-            var file1 = fopen("file".GetPointer(), "r+".GetPointer());
+            var file1 = fopen("file", "r+");
             Assert.NotNull(file1);
             Assert.IsType<MemoryStream>(file1.Source);
             Assert.Same(Encoding.ASCII, file1.Encoding);
             Assert.Equal(CFileMode.Read | CFileMode.Update, file1.Mode);
 
-            var file2 = freopen("file".GetPointer(), "w+".GetPointer(), file1);
+            var file2 = freopen("file", "w+", file1);
             Assert.NotNull(file2);
             Assert.Same(file1, file2);
             Assert.IsType<MemoryStream>(file2.Source);
@@ -66,16 +66,16 @@ namespace CPort.Tests
                 .Returns(() => Tuple.Create<Stream, Encoding>(new MemoryStream(), null));
             mHost.SetupGet(h => h.DefaultFileEncoding).Returns(Encoding.UTF8);
             C.SetSystemHost(mHost.Object);
-            file2 = freopen("file".GetPointer(), "a+".GetPointer(), file1);
+            file2 = freopen("file", "a+", file1);
             Assert.NotNull(file2);
             Assert.IsType<MemoryStream>(file2.Source);
             Assert.Same(Encoding.UTF8, file2.Encoding);
             Assert.Equal(CFileMode.Append | CFileMode.Update, file2.Mode);
 
             C.SetSystemHost(null);
-            Assert.Null(freopen("file".GetPointer(), "r".GetPointer(), file1));
-            Assert.Null(freopen(NULL, "r".GetPointer(), file1));
-            Assert.Null(freopen("file".GetPointer(), NULL, file1));
+            Assert.Null(freopen("file", "r", file1));
+            Assert.Null(freopen(NULL, "r", file1));
+            Assert.Null(freopen("file", NULL, file1));
         }
 
         [Fact]

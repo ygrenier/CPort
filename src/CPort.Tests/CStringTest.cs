@@ -12,8 +12,8 @@ namespace CPort.Tests
         [Fact]
         public void Cstrcpy()
         {
-            var source = "Test".GetPointer();
-            var dest = "01234567890123456789".GetPointer();
+            PChar source = "Test";
+            PChar dest = "01234567890123456789";
 
             var actual = strcpy(dest, source);
             Assert.Equal(new char[] { 'T', 'e', 's', 't', '\0', '5' }, actual.Take(6));
@@ -23,8 +23,8 @@ namespace CPort.Tests
         [Fact]
         public void Cstrncpy()
         {
-            var source = "Test".GetPointer();
-            var dest = "01234567890123456789".GetPointer();
+            PChar source = "Test";
+            PChar dest = "01234567890123456789";
 
             var actual = strncpy(dest + 1, source, 3);
             Assert.Equal(new char[] { '0', 'T', 'e', 's', '4', '5' }, dest.Take(6));
@@ -40,8 +40,8 @@ namespace CPort.Tests
         [Fact]
         public void Cstrcat()
         {
-            var source = "Test".GetPointer();
-            var dest = "012\04567890123456789".GetPointer();
+            PChar source = "Test";
+            PChar dest = "012\04567890123456789";
 
             var actual = strcat(dest, source);
             Assert.Equal(new char[] { '0', '1', '2', 'T', 'e', 's', 't', '\0', '8' }, actual.Take(9));
@@ -51,8 +51,8 @@ namespace CPort.Tests
         [Fact]
         public void Cstrncat()
         {
-            var source = "Test".GetPointer();
-            var dest = "012\04567890123456789".GetPointer();
+            PChar source = "Test";
+            PChar dest = "012\04567890123456789";
 
             var actual = strncat(dest + 1, source, 3);
             Assert.Equal("012Tes\07890123456789\0", new string(dest.ToArray()));
@@ -65,75 +65,75 @@ namespace CPort.Tests
         [Fact]
         public void Cstrcmp()
         {
-            var s1 = "a".GetPointer();
-            var s2 = "a".GetPointer();
+            PChar s1 = "a";
+            PChar s2 = "a";
             Assert.True(strcmp(s1, s2) == 0);
 
-            s1 = "a".GetPointer();
-            s2 = "A".GetPointer();
+            s1 = "a";
+            s2 = "A";
             Assert.True(strcmp(s1, s2) > 0);
 
-            s1 = "A".GetPointer();
-            s2 = "a".GetPointer();
+            s1 = "A";
+            s2 = "a";
             Assert.True(strcmp(s1, s2) < 0);
 
-            s1 = "aBc".GetPointer();
-            s2 = "abc".GetPointer();
+            s1 = "aBc";
+            s2 = "abc";
             Assert.True(strcmp(s1, s2) < 0);
 
-            s1 = "ab".GetPointer();
-            s2 = "abc".GetPointer();
+            s1 = "ab";
+            s2 = "abc";
             Assert.True(strcmp(s1, s2) < 0);
 
-            s1 = "abc".GetPointer();
-            s2 = "ab".GetPointer();
+            s1 = "abc";
+            s2 = "ab";
             Assert.True(strcmp(s1, s2) > 0);
         }
 
         [Fact]
         public void Cstrncmp()
         {
-            var s1 = "a".GetPointer();
-            var s2 = "a".GetPointer();
+            PChar s1 = "a";
+            PChar s2 = "a";
             Assert.True(strncmp(s1, s2, 3) == 0);
 
-            s1 = "a".GetPointer();
-            s2 = "A".GetPointer();
+            s1 = "a";
+            s2 = "A";
             Assert.True(strncmp(s1, s2, 3) > 0);
 
-            s1 = "A".GetPointer();
-            s2 = "a".GetPointer();
+            s1 = "A";
+            s2 = "a";
             Assert.True(strncmp(s1, s2, 3) < 0);
 
-            s1 = "aBc".GetPointer();
-            s2 = "abc".GetPointer();
+            s1 = "aBc";
+            s2 = "abc";
             Assert.True(strncmp(s1, s2, 3) < 0);
 
-            s1 = "ab".GetPointer();
-            s2 = "abc".GetPointer();
+            s1 = "ab";
+            s2 = "abc";
             Assert.True(strncmp(s1, s2, 3) < 0);
 
-            s1 = "abc".GetPointer();
-            s2 = "ab".GetPointer();
+            s1 = "abc";
+            s2 = "ab";
             Assert.True(strncmp(s1, s2, 3) > 0);
 
-            s1 = "aBc".GetPointer();
-            s2 = "abc".GetPointer();
+            s1 = "aBc";
+            s2 = "abc";
             Assert.True(strncmp(s1, s2, 2) < 0);
 
-            s1 = "ab".GetPointer();
-            s2 = "abc".GetPointer();
+            s1 = "ab";
+            s2 = "abc";
             Assert.True(strncmp(s1, s2, 2) == 0);
 
-            s1 = "abc".GetPointer();
-            s2 = "ab".GetPointer();
+            s1 = "abc";
+            s2 = "ab";
             Assert.True(strncmp(s1, s2, 2) == 0);
         }
 
         [Fact]
         public void Cstrchr()
         {
-            var cs = "abCdeCgh".GetPointer();
+            PChar cs = "abCdeCgh";
 
             var actual = strchr(cs, 'C');
             Assert.False(actual.IsNull);
@@ -146,7 +146,7 @@ namespace CPort.Tests
         [Fact]
         public void Cstrrchr()
         {
-            var cs = "abCdeCgh".GetPointer();
+            PChar cs = "abCdeCgh";
 
             var actual = strrchr(cs, 'C');
             Assert.False(actual.IsNull);
@@ -159,38 +159,38 @@ namespace CPort.Tests
         [Fact]
         public void Cstrspn()
         {
-            var str = "129th".GetPointer();
-            var keys = "1234567890".GetPointer();
+            PChar str = "129th";
+            PChar keys = "1234567890";
 
             Assert.Equal(3, strspn(str, keys));
 
-            str = "12".GetPointer();
+            str = "12";
             Assert.Equal(2, strspn(str, keys));
 
-            str = "ab12".GetPointer();
+            str = "ab12";
             Assert.Equal(0, strspn(str, keys));
         }
 
         [Fact]
         public void Cstrcspn()
         {
-            var str = "fcba73".GetPointer();
-            var keys = "1234567890".GetPointer();
+            PChar str = "fcba73";
+            PChar keys = "1234567890";
 
             Assert.Equal(4, strcspn(str, keys));
 
-            str = "fc".GetPointer();
+            str = "fc";
             Assert.Equal(2, strcspn(str, keys));
 
-            str = "12ab".GetPointer();
+            str = "12ab";
             Assert.Equal(0, strcspn(str, keys));
         }
 
         [Fact]
         public void Cstrpbrk()
         {
-            var str = "This is a sample string".GetPointer();
-            var keys = "aeiou".GetPointer();
+            PChar str = "This is a sample string";
+            PChar keys = "aeiou";
 
             var actual = strpbrk(str, keys);
             Assert.False(actual.IsNull);
@@ -223,8 +223,8 @@ namespace CPort.Tests
         [Fact]
         public void Cstrstr()
         {
-            var str = "This is a sample string".GetPointer();
-            var search = "sample".GetPointer();
+            PChar str = "This is a sample string";
+            PChar search = "sample";
 
             // In the string
             var actual = strstr(str, search);
@@ -232,23 +232,23 @@ namespace CPort.Tests
             Assert.Equal(10, actual.Index);
 
             // Not in the string, with common start
-            search = "samPle".GetPointer();
+            search = "samPle";
             actual = strstr(str, search);
             Assert.True(actual.IsNull);
 
             // Not in the string
-            search = "Sample".GetPointer();
+            search = "Sample";
             actual = strstr(str, search);
             Assert.True(actual.IsNull);
 
             // At the end of the string 
-            search = "string".GetPointer();
+            search = "string";
             actual = strstr(str, search);
             Assert.False(actual.IsNull);
             Assert.Equal(17, actual.Index);
 
             // Not in the string but start at the end of the string
-            search = "ringer".GetPointer();
+            search = "ringer";
             actual = strstr(str, search);
             Assert.True(actual.IsNull);
         }
@@ -256,21 +256,21 @@ namespace CPort.Tests
         [Fact]
         public void Cstrlen()
         {
-            var str = "Test".GetPointer();
+            PChar str = "Test";
             Assert.Equal(4, strlen(str));
 
-            str = "Other test\0with AZT in the buffer.".GetPointer();
+            str = "Other test\0with AZT in the buffer.";
             Assert.Equal(10, strlen(str));
 
-            str = new Pointer<char>();
+            str = new PChar();
             Assert.Equal(0, strlen(str));
         }
 
         [Fact]
         public void Cstrtok()
         {
-            var str = "- This, a sample string.".GetPointer();
-            var delimiters = " -.,".GetPointer();
+            PChar str = "- This, a sample string.";
+            PChar delimiters = " -.,";
 
             Assert.True(strtok(null, delimiters).IsNull);
 
