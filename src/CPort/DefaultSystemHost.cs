@@ -28,6 +28,5 @@ namespace CPort
         /// Current default encoding for files
         /// </summary>
         public Encoding DefaultFileEncoding { get; set; }
-
     }
 }

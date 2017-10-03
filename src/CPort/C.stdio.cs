@@ -96,6 +96,26 @@ namespace CPort
             file.Source.Flush();
             return 0;
         }
+
+        /// <summary>
+        /// fprintf()
+        /// </summary>
+        public static int fprintf(FILE stream, PChar format, params object[] args)
+        {
+            return stream.Write(sprintf((string)format, args));
+        }
+
+        /// <summary>
+        /// sprintf()
+        /// </summary>
+        public static int sprintf(PChar s, PChar format, params object[] args)
+        {
+            string r = sprintf((string)format, args);
+            if (string.IsNullOrEmpty(r)) return 0;
+            strcpy(s, r);
+            return r.Length;
+        }
+
     }
 #pragma warning restore IDE1006
 }

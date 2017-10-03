@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -96,5 +97,48 @@ namespace CPort.Tests
             Assert.Throws<ArgumentNullException>(() => f.Reopen(null, m, Encoding.Default));
         }
 
+        [Fact]
+        public void WriteString()
+        {
+            var stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Read, Encoding.ASCII))
+                Assert.Equal(-1, file.Write("Été\nTest"));
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Read | CFileMode.Update, Encoding.ASCII))
+                Assert.Equal(9, file.Write("Été\nTest"));
+            Assert.Equal(new byte[] { 63, 116, 63, 13, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Write, Encoding.UTF8))
+                Assert.Equal(11, file.Write("Été\nTest"));
+            Assert.Equal(new byte[] { 195, 137, 116, 195, 169, 13, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Append, Encoding.UTF8))
+                Assert.Equal(11, file.Write("Été\nTest"));
+            Assert.Equal(new byte[] { 195, 137, 116, 195, 169, 13, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Read | CFileMode.Update | CFileMode.Binary, Encoding.ASCII))
+                Assert.Equal(8, file.Write("Été\nTest"));
+            Assert.Equal(new byte[] { 63, 116, 63, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Write | CFileMode.Binary, Encoding.UTF8))
+                Assert.Equal(10, file.Write("Été\nTest"));
+            Assert.Equal(new byte[] { 195, 137, 116, 195, 169, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Append | CFileMode.Binary, Encoding.UTF8))
+                Assert.Equal(10, file.Write("Été\nTest"));
+            Assert.Equal(new byte[] { 195, 137, 116, 195, 169, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Write, Encoding.UTF8))
+                Assert.Equal(0, file.Write(""));
+            Assert.Equal(new byte[] { }, stream.ToArray());
+
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace CPort
@@ -42,6 +43,31 @@ namespace CPort
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Encoding = mode.HasFlag(CFileMode.Binary) ? encoding : encoding ?? throw new ArgumentNullException(nameof(encoding));
             Mode = mode;
+        }
+
+        /// <summary>
+        /// Encode a string
+        /// </summary>
+        byte[] EncodeString(string value)
+        {
+            if (value != null && !Mode.Value.HasFlag(CFileMode.Binary))
+                value = value.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", Environment.NewLine);
+            return Encoding != null ? Encoding.GetBytes(value) : value.Cast<char>().Select(c => (byte)c).ToArray();
+        }
+
+        bool CanWrite() => Source?.CanWrite == true
+            && (Mode.Value.HasFlag(CFileMode.Update) || Mode.Value.HasFlag(CFileMode.Write) || Mode.Value.HasFlag(CFileMode.Append));
+
+        /// <summary>
+        /// Write a string in the file
+        /// </summary>
+        public int Write(string value)
+        {
+            if (!CanWrite()) return -1;
+            if (string.IsNullOrWhiteSpace(value)) return 0;
+            var b = EncodeString(value);
+            Source.Write(b, 0, b.Length);
+            return b.Length;
         }
 
         /// <summary>

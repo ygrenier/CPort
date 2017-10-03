@@ -99,5 +99,29 @@ namespace CPort.Tests
             Assert.Equal(EOF, fflush(file));
         }
 
+        [Fact]
+        public void Fprintf()
+        {
+            using (var stream = new MemoryStream())
+            {
+                using (var file = new FILE(stream, CFileMode.Write, Encoding.ASCII))
+                {
+                    fprintf(file, "%s:%4d", "Test", 123);
+                }
+                Assert.Equal(Encoding.ASCII.GetBytes("Test: 123"), stream.ToArray());
+            }
+        }
+
+        [Fact]
+        public void Sprintf()
+        {
+            var buff = new PChar(15);
+            Assert.Equal(9, sprintf(buff + 1, "%s:%4d", "Test", 123));
+            Assert.Equal(new char[] { '\0', 'T', 'e', 's', 't', ':', ' ', '1', '2', '3', '\0', '\0', '\0', '\0', '\0' }, buff.Source);
+
+            Assert.Equal(0, sprintf(buff + 2, "", "Test", 123));
+            Assert.Equal(new char[] { '\0', 'T', 'e', 's', 't', ':', ' ', '1', '2', '3', '\0', '\0', '\0', '\0', '\0' }, buff.Source);
+        }
+
     }
 }

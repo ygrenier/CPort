@@ -240,12 +240,6 @@ namespace CPort
             }
         }
         #endregion
-        #region printf
-        // Disable this because Console is not available on PCL
-        //public static void printf(string Format, params object[] Parameters) {
-        //    Console.Write(C.sprintf(Format, Parameters));
-        //}
-        #endregion
         #region fprintf
         public static void fprintf(TextWriter Destination, string Format, params object[] Parameters)
         {
