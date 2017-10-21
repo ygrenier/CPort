@@ -66,8 +66,17 @@ namespace CPort
             if (!CanWrite()) return -1;
             if (string.IsNullOrWhiteSpace(value)) return 0;
             var b = EncodeString(value);
-            Source.Write(b, 0, b.Length);
-            return b.Length;
+            return Write(b, 0, b.Length);
+        }
+
+        /// <summary>
+        /// Write a byte buffer in the file
+        /// </summary>
+        public int Write(byte[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return -1;
+            Source.Write(buffer, offset, count);
+            return count;
         }
 
         /// <summary>
