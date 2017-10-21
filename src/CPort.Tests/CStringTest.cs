@@ -251,6 +251,18 @@ namespace CPort.Tests
             search = "ringer";
             actual = strstr(str, search);
             Assert.True(actual.IsNull);
+
+            // The search is empty
+            actual = strstr(str, "");
+            Assert.True(actual.IsNull);
+            actual = strstr(str, NULL);
+            Assert.True(actual.IsNull);
+
+            // The string is null or empty
+            actual = strstr("", search);
+            Assert.True(actual.IsNull);
+            actual = strstr(NULL, search);
+            Assert.True(actual.IsNull);
         }
 
         [Fact]

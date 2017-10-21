@@ -308,7 +308,7 @@ namespace CPort
         /// </summary>
         public static void qsort<T>(Pointer<T> @base, int n, Func<T, T, int> cmp)
         {
-            if (n == 0 || @base.IsNull) return;
+            if (n == 0 || @base.IsNull || cmp == null) return;
             quicksort(@base, 0, n, cmp);
         }
         static void quicksort<T>(Pointer<T> @base, int start, int end, Func<T, T, int> cmp)

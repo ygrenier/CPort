@@ -208,7 +208,7 @@ namespace CPort
         public static PChar strstr(PChar cs, PChar ct)
         {
             // If ct is empty then stop here because we never found an empty string
-            if (ct.IsNull || ct.Value == 0) return new PChar();
+            if (cs.IsNull || ct.IsNull || ct.Value == 0) return new PChar();
             char c;
             while ((c = cs.Value) > 0)
             {

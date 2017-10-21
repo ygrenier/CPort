@@ -24,11 +24,77 @@ namespace CPort.Tests
                 .Returns(() => Tuple.Create<Stream, Encoding>(new MemoryStream(), Encoding.ASCII));
             C.SetSystemHost(mHost.Object);
 
-            var file = fopen("file", "w");
+            var file = fopen("file", "r");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Read, file.Mode);
+
+            file = fopen("file", "w");
             Assert.NotNull(file);
             Assert.IsType<MemoryStream>(file.Source);
             Assert.Same(Encoding.ASCII, file.Encoding);
             Assert.Equal(CFileMode.Write, file.Mode);
+
+            file = fopen("file", "a");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Append, file.Mode);
+
+            file = fopen("file", "r+");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Read | CFileMode.Update, file.Mode);
+
+            file = fopen("file", "w+");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Write | CFileMode.Update, file.Mode);
+
+            file = fopen("file", "a+");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Append | CFileMode.Update, file.Mode);
+
+            file = fopen("file", "rb");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Read | CFileMode.Binary, file.Mode);
+
+            file = fopen("file", "wb");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Write | CFileMode.Binary, file.Mode);
+
+            file = fopen("file", "ab");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Append | CFileMode.Binary, file.Mode);
+
+            file = fopen("file", "r+b");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Read | CFileMode.Update | CFileMode.Binary, file.Mode);
+
+            file = fopen("file", "w+b");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Write | CFileMode.Update | CFileMode.Binary, file.Mode);
+
+            file = fopen("file", "a+b");
+            Assert.NotNull(file);
+            Assert.IsType<MemoryStream>(file.Source);
+            Assert.Same(Encoding.ASCII, file.Encoding);
+            Assert.Equal(CFileMode.Append | CFileMode.Update | CFileMode.Binary, file.Mode);
 
             mHost.Setup(h => h.OpenFile(It.IsAny<string>(), It.IsAny<CFileMode>()))
                 .Returns(() => Tuple.Create<Stream, Encoding>(new MemoryStream(), null));

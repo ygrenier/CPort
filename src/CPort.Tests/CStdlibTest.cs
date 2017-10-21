@@ -488,6 +488,14 @@ namespace CPort.Tests
 
             qsort(values, values.Length - 1, cmpints);
             Assert.Equal(new int[] { 10, 20, 25, 40, 90, 100 }, values);
+
+            values = new int[] { 40, 10, 100, 90, 20, 25 };
+            qsort(NULL, values.Length - 1, cmpints);
+            Assert.Equal(new int[] { 40, 10, 100, 90, 20, 25 }, values);
+            qsort(values, 0, cmpints);
+            Assert.Equal(new int[] { 40, 10, 100, 90, 20, 25 }, values);
+            qsort<int>(values, values.Length - 1, null);
+            Assert.Equal(new int[] { 40, 10, 100, 90, 20, 25 }, values);
         }
 
         [Fact]
