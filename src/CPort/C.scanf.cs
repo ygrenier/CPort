@@ -27,22 +27,92 @@ namespace CPort
     /// </remarks>
     partial class C
     {
-
         /// <summary>
         /// Parser
+        /// </summary>
+        abstract class Parser
+        {
+            public static char NullChar = (char)0;
+            /// <summary>
+            /// Returns the character at the current position, or a null character if we're
+            /// at the end of the document
+            /// </summary>
+            /// <returns>The character at the current position</returns>
+            public virtual char Peek() => Peek(0);
+
+            /// <summary>
+            /// Returns the character at the specified number of characters beyond the current
+            /// position, or a null character if the specified position is at the end of the
+            /// document
+            /// </summary>
+            /// <param name="ahead">The number of characters beyond the current position</param>
+            /// <returns>The character at the specified position</returns>
+            public abstract char Peek(int ahead);
+
+            /// <summary>
+            /// Extracts a substring from the specified range of the current text
+            /// </summary>
+            /// <param name="start"></param>
+            /// <param name="end"></param>
+            /// <returns></returns>
+            public abstract string Extract(int start, int end);
+
+            /// <summary>
+            /// Moves the current position ahead one character
+            /// </summary>
+            public virtual void MoveAhead() => MoveAhead(1);
+
+            /// <summary>
+            /// Moves the current position ahead the specified number of characters
+            /// </summary>
+            /// <param name="ahead">The number of characters to move ahead</param>
+            public abstract void MoveAhead(int ahead);
+
+            /// <summary>
+            /// Moves the current position to the next character that is not whitespace
+            /// </summary>
+            public virtual void MovePastWhitespace()
+            {
+                while (Char.IsWhiteSpace(Peek()))
+                    MoveAhead();
+            }
+
+            /// <summary>
+            /// Moves to the next occurrence of the specified character
+            /// </summary>
+            /// <param name="c">Character to find</param>
+            public virtual void MoveTo(char c)
+            {
+                char r;
+                while ((r = Peek()) != NullChar && r != c)
+                    MoveAhead(1);
+            }
+
+            /// <summary>
+            /// Indicates if the current position is at the end of the current document
+            /// </summary>
+            public abstract bool EndOfText { get; }
+
+            /// <summary>
+            /// Position
+            /// </summary>
+            public abstract int Position { get; }
+        }
+
+        /// <summary>
+        /// Parser for string
         /// </summary>
         /// <remarks>
         /// All unused methods from the original code are commented for tests
         /// </remarks>
-        class TextParser
+        class TextParser : Parser
         {
             private string _text;
             private int _pos;
 
             //public string Text { get { return _text; } }
-            public int Position { get { return _pos; } }
+            public override int Position { get { return _pos; } }
             //public int Remaining { get { return _text.Length - _pos; } }
-            public static char NullChar = (char)0;
 
             //public TextParser() {
             //    Reset(null);
@@ -73,19 +143,9 @@ namespace CPort
             /// <summary>
             /// Indicates if the current position is at the end of the current document
             /// </summary>
-            public bool EndOfText
+            public override bool EndOfText
             {
                 get { return (_pos >= _text.Length); }
-            }
-
-            /// <summary>
-            /// Returns the character at the current position, or a null character if we're
-            /// at the end of the document
-            /// </summary>
-            /// <returns>The character at the current position</returns>
-            public char Peek()
-            {
-                return Peek(0);
             }
 
             /// <summary>
@@ -95,7 +155,7 @@ namespace CPort
             /// </summary>
             /// <param name="ahead">The number of characters beyond the current position</param>
             /// <returns>The character at the specified position</returns>
-            public char Peek(int ahead)
+            public override char Peek(int ahead)
             {
                 int pos = (_pos + ahead);
                 if (pos < _text.Length)
@@ -118,24 +178,16 @@ namespace CPort
             /// <param name="start"></param>
             /// <param name="end"></param>
             /// <returns></returns>
-            public string Extract(int start, int end)
+            public override string Extract(int start, int end)
             {
                 return _text.Substring(start, end - start);
-            }
-
-            /// <summary>
-            /// Moves the current position ahead one character
-            /// </summary>
-            public void MoveAhead()
-            {
-                MoveAhead(1);
             }
 
             /// <summary>
             /// Moves the current position ahead the specified number of characters
             /// </summary>
             /// <param name="ahead">The number of characters to move ahead</param>
-            public void MoveAhead(int ahead)
+            public override void MoveAhead(int ahead)
             {
                 _pos = Math.Min(_pos + ahead, _text.Length);
             }
@@ -155,7 +207,7 @@ namespace CPort
             /// Moves to the next occurrence of the specified character
             /// </summary>
             /// <param name="c">Character to find</param>
-            public void MoveTo(char c)
+            public override void MoveTo(char c)
             {
                 _pos = _text.IndexOf(c, _pos);
                 if (_pos < 0)
@@ -209,14 +261,87 @@ namespace CPort
             //    }
             //}
 
+        }
+
+        /// <summary>
+        /// Parser for <see cref="FILE"/>
+        /// </summary>
+        class FileParser : Parser
+        {
+            FILE _file;
+            List<char> _buffer;
+            int _pos;
+            bool _eof;
+
             /// <summary>
-            /// Moves the current position to the next character that is not whitespace
+            /// Create the file
             /// </summary>
-            public void MovePastWhitespace()
+            public FileParser(FILE file)
             {
-                while (Char.IsWhiteSpace(Peek()))
-                    MoveAhead();
+                _file = file;
+                _buffer = new List<char>();
+                _pos = 0;
             }
+
+            void CheckBuffer(int pos)
+            {
+                while (pos <= _buffer.Count)
+                {
+                    int c = _file.Read();
+                    if (c == EOF) break;
+                    _buffer.Add((char)c);
+                }
+            }
+
+            /// <summary>
+            /// Returns the character at the specified number of characters beyond the current
+            /// position, or a null character if the specified position is at the end of the
+            /// document
+            /// </summary>
+            /// <param name="ahead">The number of characters beyond the current position</param>
+            /// <returns>The character at the specified position</returns>
+            public override char Peek(int ahead)
+            {
+                int p = _pos + ahead;
+                CheckBuffer(p);
+                if (p < _buffer.Count)
+                    return _buffer[p];
+                return NullChar;
+            }
+
+            /// <summary>
+            /// Extracts a substring from the specified range of the current text
+            /// </summary>
+            /// <param name="start"></param>
+            /// <param name="end"></param>
+            /// <returns></returns>
+            public override string Extract(int start, int end)
+            {
+                CheckBuffer(end);
+                return new string(_buffer.Skip(start).Take(end - start).ToArray());
+            }
+
+            /// <summary>
+            /// Moves the current position ahead the specified number of characters
+            /// </summary>
+            /// <param name="ahead">The number of characters to move ahead</param>
+            public override void MoveAhead(int ahead)
+            {
+                int p = _pos + ahead;
+                CheckBuffer(p);
+                _pos = Math.Min(p, _buffer.Count);
+                _eof = _pos >= _buffer.Count;
+            }
+
+            /// <summary>
+            /// Indicates if the current position is at the end of the current document
+            /// </summary>
+            public override bool EndOfText => _eof;
+
+            /// <summary>
+            /// Position
+            /// </summary>
+            public override int Position => _pos;
         }
 
         /// <summary>
@@ -249,7 +374,7 @@ namespace CPort
             }
 
             // Delegate to parse a type
-            protected delegate bool ParseValue(TextParser input, FormatSpecifier spec);
+            protected delegate bool ParseValue(Parser input, FormatSpecifier spec);
 
             // Class to associate format type with type parser
             protected class TypeParser
@@ -293,18 +418,8 @@ namespace CPort
                 Results = new List<object>();
             }
 
-            /// <summary>
-            /// Parses the input string according to the rules in the
-            /// format string. Similar to the standard C library's
-            /// sscanf() function. Parsed fields are placed in the
-            /// class' Results member.
-            /// </summary>
-            /// <param name="input">String to parse</param>
-            /// <param name="format">Specifies rules for parsing input</param>
-            public int Parse(string input, string format)
+            private int Parse(Parser inp, Parser fmt)
             {
-                TextParser inp = new TextParser(input);
-                TextParser fmt = new TextParser(format);
                 List<object> results = new List<object>();
                 FormatSpecifier spec = new FormatSpecifier();
                 int count = 0;
@@ -344,9 +459,39 @@ namespace CPort
             }
 
             /// <summary>
+            /// Parses the input string according to the rules in the
+            /// format string. Similar to the standard C library's
+            /// sscanf() function. Parsed fields are placed in the
+            /// class' Results member.
+            /// </summary>
+            /// <param name="input">String to parse</param>
+            /// <param name="format">Specifies rules for parsing input</param>
+            public int Parse(string input, string format)
+            {
+                Parser inp = new TextParser(input);
+                Parser fmt = new TextParser(format);
+                return Parse(inp, fmt);
+            }
+
+            /// <summary>
+            /// Parses the file according to the rules in the
+            /// format string. Similar to the standard C library's
+            /// fscanf() function. Parsed fields are placed in the
+            /// class' Results member.
+            /// </summary>
+            /// <param name="input">String to parse</param>
+            /// <param name="format">Specifies rules for parsing input</param>
+            public int Parse(FILE input, string format)
+            {
+                Parser inp = new FileParser(input);
+                Parser fmt = new TextParser(format);
+                return Parse(inp, fmt);
+            }
+
+            /// <summary>
             /// Attempts to parse a field format specifier from the format string.
             /// </summary>
-            protected bool ParseFormatSpecifier(TextParser format, FormatSpecifier spec)
+            protected bool ParseFormatSpecifier(Parser format, FormatSpecifier spec)
             {
                 // Return if not a field format specifier
                 if (format.Peek() != '%')
@@ -460,7 +605,7 @@ namespace CPort
             /// <summary>
             /// Parse a character field
             /// </summary>
-            private bool ParseCharacter(TextParser input, FormatSpecifier spec)
+            private bool ParseCharacter(Parser input, FormatSpecifier spec)
             {
                 // Parse character(s)
                 int start = input.Position;
@@ -487,7 +632,7 @@ namespace CPort
             /// <summary>
             /// Parse integer field
             /// </summary>
-            private bool ParseDecimal(TextParser input, FormatSpecifier spec)
+            private bool ParseDecimal(Parser input, FormatSpecifier spec)
             {
                 int radix = 10;
 
@@ -540,7 +685,7 @@ namespace CPort
             /// <summary>
             /// Parse a floating-point field
             /// </summary>
-            private bool ParseFloat(TextParser input, FormatSpecifier spec)
+            private bool ParseFloat(Parser input, FormatSpecifier spec)
             {
                 // Skip any whitespace
                 input.MovePastWhitespace();
@@ -606,7 +751,7 @@ namespace CPort
             /// <summary>
             /// Parse hexadecimal field
             /// </summary>
-            protected bool ParseHexadecimal(TextParser input, FormatSpecifier spec)
+            protected bool ParseHexadecimal(Parser input, FormatSpecifier spec)
             {
                 // Skip any whitespace
                 input.MovePastWhitespace();
@@ -641,7 +786,7 @@ namespace CPort
             /// <summary>
             /// Parse an octal field
             /// </summary>
-            private bool ParseOctal(TextParser input, FormatSpecifier spec)
+            private bool ParseOctal(Parser input, FormatSpecifier spec)
             {
                 // Skip any whitespace
                 input.MovePastWhitespace();
@@ -672,7 +817,7 @@ namespace CPort
             /// <summary>
             /// Parse a scan-set field
             /// </summary>
-            protected bool ParseScanSet(TextParser input, FormatSpecifier spec)
+            protected bool ParseScanSet(Parser input, FormatSpecifier spec)
             {
                 // Parse characters
                 int start = input.Position;
@@ -711,7 +856,7 @@ namespace CPort
             /// <summary>
             /// Parse a string field
             /// </summary>
-            private bool ParseString(TextParser input, FormatSpecifier spec)
+            private bool ParseString(Parser input, FormatSpecifier spec)
             {
                 // Skip any whitespace
                 input.MovePastWhitespace();
@@ -781,6 +926,7 @@ namespace CPort
             }
         }
 
+        #region sscanf with ref var
         /// <summary>
         /// sscanf with 1 result
         /// </summary>
@@ -888,6 +1034,117 @@ namespace CPort
                 r6 = (T6)parser.Results[5];
             return res;
         }
+        #endregion
+
+        #region fscanf with ref var
+        /// <summary>
+        /// fscanf with 1 result
+        /// </summary>
+        public static int fscanf<T>(FILE input, String format, ref T r)
+        {
+            var parser = new ScanFormatted();
+            parser.Parse(input, format);
+            int res = parser.Results.Count;
+            if (res > 0)
+                r = (T)parser.Results[0];
+            return res;
+        }
+
+        /// <summary>
+        /// fscanf with 2 results
+        /// </summary>
+        public static int fscanf<T1, T2>(FILE input, String format, ref T1 r1, ref T2 r2)
+        {
+            var parser = new ScanFormatted();
+            parser.Parse(input, format);
+            int res = parser.Results.Count;
+            if (res > 0)
+                r1 = (T1)parser.Results[0];
+            if (res > 1)
+                r2 = (T2)parser.Results[1];
+            return res;
+        }
+
+        /// <summary>
+        /// fscanf with 3 results
+        /// </summary>
+        public static int fscanf<T1, T2, T3>(FILE input, String format, ref T1 r1, ref T2 r2, ref T3 r3)
+        {
+            var parser = new ScanFormatted();
+            parser.Parse(input, format);
+            int res = parser.Results.Count;
+            if (res > 0)
+                r1 = (T1)parser.Results[0];
+            if (res > 1)
+                r2 = (T2)parser.Results[1];
+            if (res > 2)
+                r3 = (T3)parser.Results[2];
+            return res;
+        }
+
+        /// <summary>
+        /// fscanf with 4 results
+        /// </summary>
+        public static int fscanf<T1, T2, T3, T4>(FILE input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4)
+        {
+            var parser = new ScanFormatted();
+            parser.Parse(input, format);
+            int res = parser.Results.Count;
+            if (res > 0)
+                r1 = (T1)parser.Results[0];
+            if (res > 1)
+                r2 = (T2)parser.Results[1];
+            if (res > 2)
+                r3 = (T3)parser.Results[2];
+            if (res > 3)
+                r4 = (T4)parser.Results[3];
+            return res;
+        }
+
+        /// <summary>
+        /// fscanf with 5 results
+        /// </summary>
+        public static int fscanf<T1, T2, T3, T4, T5>(FILE input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4, ref T5 r5)
+        {
+            var parser = new ScanFormatted();
+            parser.Parse(input, format);
+            int res = parser.Results.Count;
+            if (res > 0)
+                r1 = (T1)parser.Results[0];
+            if (res > 1)
+                r2 = (T2)parser.Results[1];
+            if (res > 2)
+                r3 = (T3)parser.Results[2];
+            if (res > 3)
+                r4 = (T4)parser.Results[3];
+            if (res > 4)
+                r5 = (T5)parser.Results[4];
+            return res;
+        }
+
+        /// <summary>
+        /// fscanf with 6 results
+        /// </summary>
+        public static int fscanf<T1, T2, T3, T4, T5, T6>(FILE input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4, ref T5 r5, ref T6 r6)
+        {
+            var parser = new ScanFormatted();
+            parser.Parse(input, format);
+            int res = parser.Results.Count;
+            if (res > 0)
+                r1 = (T1)parser.Results[0];
+            if (res > 1)
+                r2 = (T2)parser.Results[1];
+            if (res > 2)
+                r3 = (T3)parser.Results[2];
+            if (res > 3)
+                r4 = (T4)parser.Results[3];
+            if (res > 4)
+                r5 = (T5)parser.Results[4];
+            if (res > 5)
+                r6 = (T6)parser.Results[5];
+            return res;
+        }
+        #endregion
 
     }
 }

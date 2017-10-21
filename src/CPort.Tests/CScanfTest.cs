@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using Xunit;
 
 namespace CPort.Tests
@@ -348,7 +350,7 @@ namespace CPort.Tests
         }
 
         [Fact]
-        public void TestScanf()
+        public void TestSScanf()
         {
             Int32 r1 = 0, r2 = 0;
             String r3 = null, r4 = null;
@@ -401,6 +403,80 @@ namespace CPort.Tests
             Assert.Equal(123, r5);
             Assert.Equal(987, r6);
 
+        }
+
+        [Fact]
+        public void TestFScanf()
+        {
+            Int32 r1 = 0, r2 = 0;
+            String r3 = null, r4 = null;
+            Int32 r5 = 0, r6 = 0;
+
+            String test = "Copyright 2009-2011 CompanyName (Multi-Word message) - 123 - 987";
+            byte[] buffer = Encoding.ASCII.GetBytes(test);
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1 = r2 = 0; r3 = r4 = null;
+                Assert.Equal(1, C.fscanf(file, "Copyright %d", ref r1));
+                Assert.Equal(2009, r1);
+                Assert.Equal(0, r2);
+                Assert.Equal(null, r3);
+                Assert.Equal(null, r4);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1 = r2 = 0; r3 = r4 = null;
+                Assert.Equal(2, C.fscanf(file, "Copyright %d-%d", ref r1, ref r2));
+                Assert.Equal(2009, r1);
+                Assert.Equal(2011, r2);
+                Assert.Equal(null, r3);
+                Assert.Equal(null, r4);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1 = r2 = 0; r3 = r4 = null;
+                Assert.Equal(3, C.fscanf(file, "Copyright %d-%d %s", ref r1, ref r2, ref r3));
+                Assert.Equal(2009, r1);
+                Assert.Equal(2011, r2);
+                Assert.Equal("CompanyName", r3);
+                Assert.Equal(null, r4);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1 = r2 = 0; r3 = r4 = null;
+                Assert.Equal(4, C.fscanf(file, "Copyright %d-%d %s (%[^)]", ref r1, ref r2, ref r3, ref r4));
+                Assert.Equal(2009, r1);
+                Assert.Equal(2011, r2);
+                Assert.Equal("CompanyName", r3);
+                Assert.Equal("Multi-Word message", r4);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1 = r2 = 0; r3 = r4 = null;
+                Assert.Equal(5, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d", ref r1, ref r2, ref r3, ref r4, ref r5));
+                Assert.Equal(2009, r1);
+                Assert.Equal(2011, r2);
+                Assert.Equal("CompanyName", r3);
+                Assert.Equal("Multi-Word message", r4);
+                Assert.Equal(123, r5);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1 = r2 = r5 = 0; r3 = r4 = null;
+                Assert.Equal(6, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d - %d", ref r1, ref r2, ref r3, ref r4, ref r5, ref r6));
+                Assert.Equal(2009, r1);
+                Assert.Equal(2011, r2);
+                Assert.Equal("CompanyName", r3);
+                Assert.Equal("Multi-Word message", r4);
+                Assert.Equal(123, r5);
+                Assert.Equal(987, r6);
+            }
         }
 
     }
