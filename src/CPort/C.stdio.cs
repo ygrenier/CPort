@@ -126,6 +126,32 @@ namespace CPort
         }
 
         /// <summary>
+        /// fgets()
+        /// </summary>
+        public static PChar fgets(PChar s, int n, FILE stream)
+        {
+            if (stream == null || s.IsNull || n == 0) return NULL;
+            int cnt = 0;
+            PChar p = s;
+            n--;
+            while (cnt < n)
+            {
+                int c = stream.Read();
+                if (c == EOF)
+                {
+                    if (cnt == 0) return NULL;
+                    break;
+                }
+                p.Value = (char)c;
+                p++;
+                if (c == 10) break;
+                cnt++;
+            }
+            p.Value = '\0';
+            return s;
+        }
+
+        /// <summary>
         /// fputc()
         /// </summary>
         public static int fputc(int c, FILE stream)

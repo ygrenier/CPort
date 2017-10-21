@@ -137,7 +137,60 @@ namespace CPort.Tests
 
             stream = new MemoryStream(new byte[] { 84, 13, 10, 84 });
             using (var file = new FILE(stream, CFileMode.Write, Encoding.ASCII))
+            {
                 Assert.Equal(EOF, fgetc(file));
+                Assert.Equal(EOF, fgetc(null));
+            }
+        }
+
+        [Fact]
+        public void Fgets()
+        {
+            var stream = new MemoryStream(new byte[] { 84, 13, 10, 84 });
+            PChar s = new PChar(255);
+            using (var file = new FILE(stream, CFileMode.Read, Encoding.ASCII))
+            {
+                Assert.Equal("T\n", fgets(s, 255, file).GetString());
+                Assert.Equal("T", fgets(s, 255, file).GetString());
+                Assert.Equal(NULL, fgets(s, 255, file));
+            }
+
+            stream = new MemoryStream(new byte[] { 84, 13, 10, 84 });
+            using (var file = new FILE(stream, CFileMode.Read | CFileMode.Binary, Encoding.ASCII))
+            {
+                Assert.Equal("T\r\n", fgets(s, 255, file).GetString());
+                Assert.Equal("T", fgets(s, 255, file).GetString());
+                Assert.Equal(NULL, fgets(s, 255, file));
+            }
+
+            stream = new MemoryStream(new byte[] { 84, 84, 84, 13, 10, 84, 84, 84 });
+            using (var file = new FILE(stream, CFileMode.Read, Encoding.ASCII))
+            {
+                Assert.Equal("TT", fgets(s, 3, file).GetString());
+                Assert.Equal("T\n", fgets(s, 3, file).GetString());
+                Assert.Equal("TT", fgets(s, 3, file).GetString());
+                Assert.Equal("T", fgets(s, 3, file).GetString());
+                Assert.Equal(NULL, fgets(s, 3, file));
+            }
+
+            stream = new MemoryStream(new byte[] { 84, 84, 84, 13, 10, 84, 84, 84 });
+            using (var file = new FILE(stream, CFileMode.Read | CFileMode.Binary, Encoding.ASCII))
+            {
+                Assert.Equal("TT", fgets(s, 3, file).GetString());
+                Assert.Equal("T\r", fgets(s, 3, file).GetString());
+                Assert.Equal("\n", fgets(s, 3, file).GetString());
+                Assert.Equal("TT", fgets(s, 3, file).GetString());
+                Assert.Equal("T", fgets(s, 3, file).GetString());
+                Assert.Equal(NULL, fgets(s, 3, file));
+            }
+
+            stream = new MemoryStream(new byte[] { 84, 13, 10, 84 });
+            using (var file = new FILE(stream, CFileMode.Write, Encoding.ASCII))
+            {
+                Assert.Equal(NULL, fgets(NULL, 3, file));
+                Assert.Equal(NULL, fgets(s, 0, file));
+                Assert.Equal(NULL, fgets(s, 3, null));
+            }
         }
 
         [Fact]
@@ -216,7 +269,11 @@ namespace CPort.Tests
 
             stream = new MemoryStream();
             using (var file = new FILE(stream, CFileMode.Write, Encoding.UTF8))
+            {
                 Assert.Equal(0, fputs("", file));
+                Assert.Equal(EOF, fputs(NULL, file));
+                Assert.Equal(EOF, fputs("test", null));
+            }
             Assert.Equal(new byte[] { }, stream.ToArray());
         }
 
