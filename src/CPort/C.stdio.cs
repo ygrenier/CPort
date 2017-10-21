@@ -186,6 +186,14 @@ namespace CPort
             return fputc(c, stream);
         }
 
+        /// <summary>
+        /// ungetc()
+        /// </summary>
+        public static int ungetc(int c, FILE stream)
+        {
+            if (stream == null || c == EOF) return EOF;
+            return stream.UnreadChar((char)c) ? c : EOF;
+        }
     }
 #pragma warning restore IDE1006
 }

@@ -277,5 +277,28 @@ namespace CPort.Tests
             Assert.Equal(new byte[] { }, stream.ToArray());
         }
 
+        [Fact]
+        public void Ungetc()
+        {
+            var bytes = new byte[] { 195, 137, 116, 195, 169, 13, 10, 84, 101, 115, 116 };
+            var stream = new MemoryStream(bytes);
+            using (var file = new FILE(stream, CFileMode.Read, Encoding.UTF8))
+            {
+                Assert.Equal('É', fgetc(file));
+                Assert.Equal('t', fgetc(file));
+                Assert.Equal('T', ungetc('T', file));
+                Assert.Equal('É', ungetc('É', file));
+                Assert.Equal('É', fgetc(file));
+                Assert.Equal('T', fgetc(file));
+                Assert.Equal('é', fgetc(file));
+                Assert.Equal(EOF, ungetc(EOF, file));
+                Assert.Equal(EOF, ungetc('T', null));
+            }
+
+            stream = new MemoryStream(bytes);
+            using (var file = new FILE(stream, CFileMode.Write, Encoding.UTF8))
+                Assert.Equal(EOF, ungetc('t', file));
+        }
+
     }
 }
