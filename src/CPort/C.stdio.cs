@@ -117,6 +117,15 @@ namespace CPort
         }
 
         /// <summary>
+        /// fgetc()
+        /// </summary>
+        public static int fgetc(FILE stream)
+        {
+            if (stream == null) return EOF;
+            return stream.Read();
+        }
+
+        /// <summary>
         /// fputc()
         /// </summary>
         public static int fputc(int c, FILE stream)

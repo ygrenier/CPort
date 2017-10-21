@@ -124,6 +124,23 @@ namespace CPort.Tests
         }
 
         [Fact]
+        public void Fgetc()
+        {
+            var stream = new MemoryStream(new byte[] { 84, 13, 10, 84 });
+            using (var file = new FILE(stream, CFileMode.Read, Encoding.ASCII))
+            {
+                Assert.Equal('T', fgetc(file));
+                Assert.Equal('\n', fgetc(file));
+                Assert.Equal('T', fgetc(file));
+                Assert.Equal(EOF, fgetc(file));
+            }
+
+            stream = new MemoryStream(new byte[] { 84, 13, 10, 84 });
+            using (var file = new FILE(stream, CFileMode.Write, Encoding.ASCII))
+                Assert.Equal(EOF, fgetc(file));
+        }
+
+        [Fact]
         public void Fputc()
         {
             var stream = new MemoryStream();
