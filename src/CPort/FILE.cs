@@ -12,6 +12,10 @@ namespace CPort
     /// </summary>
     public sealed class FILE : IDisposable
     {
+        Decoder _decoder = null;
+        byte[] _decodeBuffer = new byte[12];
+        char[] _charsDecoded = new char[12];
+        Stack<char> _ungetBuffer = new Stack<char>();
 
         /// <summary>
         /// Open a file
@@ -20,6 +24,7 @@ namespace CPort
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Encoding = mode.HasFlag(CFileMode.Binary) ? encoding : encoding ?? throw new ArgumentNullException(nameof(encoding));
+            _decoder = Encoding?.GetDecoder();
             Mode = mode;
         }
 
@@ -30,6 +35,7 @@ namespace CPort
         {
             Source?.Dispose();
             Source = null;
+            _decoder = null;
             Encoding = null;
             Mode = null;
         }
@@ -42,6 +48,7 @@ namespace CPort
             if (Source != null) Dispose();
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Encoding = mode.HasFlag(CFileMode.Binary) ? encoding : encoding ?? throw new ArgumentNullException(nameof(encoding));
+            _decoder = Encoding?.GetDecoder();
             Mode = mode;
         }
 
@@ -55,15 +62,61 @@ namespace CPort
             return Encoding != null ? Encoding.GetBytes(value) : value.Cast<char>().Select(c => (byte)c).ToArray();
         }
 
+        /// <summary>
+        /// Read by decoding the next char in the source
+        /// </summary>
+        char? ReadNextChar()
+        {
+            if (_ungetBuffer.Count > 0) return _ungetBuffer.Pop();
+            int c, byteIndex = 0, byteCount = 1;
+            _decoder.Convert(_decodeBuffer, 0, 0, _charsDecoded, 0, _charsDecoded.Length, true, out int bytesUsed, out int charsUsed, out bool completed);
+            while ((c = Source.ReadByte()) != -1)
+            {
+                _decodeBuffer[byteIndex] = (byte)c;
+                _decoder.Convert(_decodeBuffer, byteIndex, byteCount
+                    , _charsDecoded, 0, _charsDecoded.Length, false
+                    , out bytesUsed, out charsUsed, out completed);
+                if (charsUsed > 0) return _charsDecoded[0];
+                byteIndex++;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Read the next char by decoding the new line chars
+        /// </summary>
+        /// <returns></returns>
+        char? ReadChar()
+        {
+            char? res = ReadNextChar();
+            if (!res.HasValue) return res;
+            char c = res.Value;
+            if (c == 13 && !Mode.Value.HasFlag(CFileMode.Binary))
+            {
+                res = ReadNextChar();
+                if (res.HasValue)
+                {
+                    char cc = res.Value;
+                    if (cc != 10)
+                        _ungetBuffer.Push(cc);
+                }
+                c = (char)10;
+            }
+            return c;
+        }
+
         bool CanWrite() => Source?.CanWrite == true
             && (Mode.Value.HasFlag(CFileMode.Update) || Mode.Value.HasFlag(CFileMode.Write) || Mode.Value.HasFlag(CFileMode.Append));
+
+        bool CanRead() => Source?.CanRead == true
+            && (Mode.Value.HasFlag(CFileMode.Update) || Mode.Value.HasFlag(CFileMode.Read));
 
         /// <summary>
         /// Write a string in the file
         /// </summary>
         public int Write(string value)
         {
-            if (!CanWrite()) return -1;
+            if (!CanWrite()) return C.EOF;
             if (string.IsNullOrEmpty(value)) return 0;
             var b = EncodeString(value);
             return Write(b, 0, b.Length);
@@ -74,9 +127,21 @@ namespace CPort
         /// </summary>
         public int Write(byte[] buffer, int offset, int count)
         {
-            if (!CanWrite()) return -1;
+            if (!CanWrite()) return C.EOF;
             Source.Write(buffer, offset, count);
             return count;
+        }
+
+        /// <summary>
+        /// Read the next character
+        /// </summary>
+        /// <returns>The next character or <see cref="C.EOF"/> </returns>
+        public int Read()
+        {
+            if (!CanRead()) return C.EOF;
+            var c = ReadChar();
+            if (!c.HasValue) return C.EOF;
+            return c.Value;
         }
 
         /// <summary>
@@ -93,6 +158,7 @@ namespace CPort
         /// File mode
         /// </summary>
         public CFileMode? Mode { get; private set; }
+
     }
 
     /// <summary>

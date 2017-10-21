@@ -139,6 +139,10 @@ namespace CPort.Tests
                 Assert.Equal(0, file.Write(""));
             Assert.Equal(new byte[] { }, stream.ToArray());
 
+            FILE f;
+            using (f = new FILE(stream, CFileMode.Write, Encoding.UTF8))
+                Assert.Equal(-1, f.Write(""));
+            Assert.Equal(-1, f.Write(""));
         }
 
         [Fact]
@@ -186,5 +190,83 @@ namespace CPort.Tests
             Assert.Equal(new byte[] { }, stream.ToArray());
 
         }
+
+        char[] ReadCharsFromFile(byte[] bytes, CFileMode mode, Encoding encoding)
+        {
+            var stream = new MemoryStream(bytes);
+            List<char> result = new List<char>();
+            using (var file = new FILE(stream, mode, encoding))
+            {
+                int c;
+                while ((c = file.Read()) != C.EOF)
+                    result.Add((char)c);
+            }
+            return result.ToArray();
+        }
+
+        [Fact]
+        public void ReadChar()
+        {
+            // ASCII text
+            var bytes = new byte[] { 63, 116, 63, 13, 10, 84, 101, 115, 116 };
+            var actual = ReadCharsFromFile(bytes, CFileMode.Read, Encoding.ASCII);
+            Assert.Equal(new char[] { '?', 't', '?', '\n', 'T', 'e', 's', 't' }, actual);
+
+            actual = ReadCharsFromFile(bytes, CFileMode.Read | CFileMode.Binary, Encoding.ASCII);
+            Assert.Equal(new char[] { '?', 't', '?', '\r', '\n', 'T', 'e', 's', 't' }, actual);
+
+            actual = ReadCharsFromFile(bytes, CFileMode.Read, Encoding.UTF8);
+            Assert.Equal(new char[] { '?', 't', '?', '\n', 'T', 'e', 's', 't' }, actual);
+
+            actual = ReadCharsFromFile(bytes, CFileMode.Read | CFileMode.Binary, Encoding.UTF8);
+            Assert.Equal(new char[] { '?', 't', '?', '\r', '\n', 'T', 'e', 's', 't' }, actual);
+
+            // UTF-8
+            bytes = new byte[] { 195, 137, 116, 195, 169, 13, 10, 84, 101, 115, 116 };
+            actual = ReadCharsFromFile(bytes, CFileMode.Read, Encoding.ASCII);
+            Assert.Equal(new char[] { '?', '?', 't', '?', '?', '\n', 'T', 'e', 's', 't' }, actual);
+
+            actual = ReadCharsFromFile(bytes, CFileMode.Read | CFileMode.Binary, Encoding.ASCII);
+            Assert.Equal(new char[] { '?', '?', 't', '?', '?', '\r', '\n', 'T', 'e', 's', 't' }, actual);
+
+            actual = ReadCharsFromFile(bytes, CFileMode.Read, Encoding.UTF8);
+            Assert.Equal(new char[] { 'É', 't', 'é', '\n', 'T', 'e', 's', 't' }, actual);
+
+            actual = ReadCharsFromFile(bytes, CFileMode.Read | CFileMode.Binary, Encoding.UTF8);
+            Assert.Equal(new char[] { 'É', 't', 'é', '\r', '\n', 'T', 'e', 's', 't' }, actual);
+
+            // New line
+            bytes = new byte[] { 84, 13, 10, 13, 10, 84 };
+            actual = ReadCharsFromFile(bytes, CFileMode.Read, Encoding.ASCII);
+            Assert.Equal(new char[] { 'T', '\n', '\n', 'T' }, actual);
+            actual = ReadCharsFromFile(bytes, CFileMode.Read | CFileMode.Binary, Encoding.ASCII);
+            Assert.Equal(new char[] { 'T', '\r', '\n', '\r', '\n', 'T' }, actual);
+
+            bytes = new byte[] { 84, 13, 13, 84 };
+            actual = ReadCharsFromFile(bytes, CFileMode.Read, Encoding.ASCII);
+            Assert.Equal(new char[] { 'T', '\n', '\n', 'T' }, actual);
+            actual = ReadCharsFromFile(bytes, CFileMode.Read | CFileMode.Binary, Encoding.ASCII);
+            Assert.Equal(new char[] { 'T', '\r', '\r', 'T' }, actual);
+
+            bytes = new byte[] { 84, 10, 10, 84 };
+            actual = ReadCharsFromFile(bytes, CFileMode.Read, Encoding.ASCII);
+            Assert.Equal(new char[] { 'T', '\n', '\n', 'T' }, actual);
+            actual = ReadCharsFromFile(bytes, CFileMode.Read | CFileMode.Binary, Encoding.ASCII);
+            Assert.Equal(new char[] { 'T', '\n', '\n', 'T' }, actual);
+
+            bytes = new byte[] { 84, 13 };
+            actual = ReadCharsFromFile(bytes, CFileMode.Read, Encoding.ASCII);
+            Assert.Equal(new char[] { 'T', '\n' }, actual);
+            actual = ReadCharsFromFile(bytes, CFileMode.Read | CFileMode.Binary, Encoding.ASCII);
+            Assert.Equal(new char[] { 'T', '\r' }, actual);
+
+            // 
+            FILE f;
+            var stream = new MemoryStream(new byte[0]);
+            using (f = new FILE(stream, CFileMode.Read, Encoding.UTF8))
+                Assert.Equal(-1, f.Read());
+            Assert.Equal(-1, f.Read());
+        }
+
     }
 }
