@@ -123,5 +123,85 @@ namespace CPort.Tests
             Assert.Equal(new char[] { '\0', 'T', 'e', 's', 't', ':', ' ', '1', '2', '3', '\0', '\0', '\0', '\0', '\0' }, buff.Source);
         }
 
+        [Fact]
+        public void Fputc()
+        {
+            var stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Read, Encoding.ASCII))
+            {
+                Assert.Equal(EOF, fputc('é', file));
+                Assert.Equal(EOF, putc('\n', file));
+                Assert.Equal(EOF, putc(EOF, file));
+                Assert.Equal(EOF, putc('a', null));
+                Assert.Equal(EOF, putc('a', file));
+            }
+            Assert.Equal(new byte[] { }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Write, Encoding.ASCII))
+            {
+                Assert.Equal('é', fputc('é', file));
+                Assert.Equal(10, putc('\n', file));
+                Assert.Equal(EOF, putc(EOF, file));
+                Assert.Equal(EOF, putc('a', null));
+                Assert.Equal('a', putc('a', file));
+            }
+            Assert.Equal(new byte[] { 63, 13, 10, 97 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Write | CFileMode.Binary, Encoding.ASCII))
+            {
+                Assert.Equal('é', fputc('é', file));
+                Assert.Equal(10, putc('\n', file));
+                Assert.Equal(EOF, putc(EOF, file));
+                Assert.Equal(EOF, putc('a', null));
+                Assert.Equal('a', putc('a', file));
+            }
+            Assert.Equal(new byte[] { 63, 10, 97 }, stream.ToArray());
+        }
+
+        [Fact]
+        public void Fputs()
+        {
+            var stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Read, Encoding.ASCII))
+                Assert.Equal(-1, fputs("Été\nTest", file));
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Read | CFileMode.Update, Encoding.ASCII))
+                Assert.Equal(9, fputs("Été\nTest", file));
+            Assert.Equal(new byte[] { 63, 116, 63, 13, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Write, Encoding.UTF8))
+                Assert.Equal(11, fputs("Été\nTest", file));
+            Assert.Equal(new byte[] { 195, 137, 116, 195, 169, 13, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Append, Encoding.UTF8))
+                Assert.Equal(11, fputs("Été\nTest", file));
+            Assert.Equal(new byte[] { 195, 137, 116, 195, 169, 13, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Read | CFileMode.Update | CFileMode.Binary, Encoding.ASCII))
+                Assert.Equal(8, fputs("Été\nTest", file));
+            Assert.Equal(new byte[] { 63, 116, 63, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Write | CFileMode.Binary, Encoding.UTF8))
+                Assert.Equal(10, fputs("Été\nTest", file));
+            Assert.Equal(new byte[] { 195, 137, 116, 195, 169, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Append | CFileMode.Binary, Encoding.UTF8))
+                Assert.Equal(10, fputs("Été\nTest", file));
+            Assert.Equal(new byte[] { 195, 137, 116, 195, 169, 10, 84, 101, 115, 116 }, stream.ToArray());
+
+            stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Write, Encoding.UTF8))
+                Assert.Equal(0, fputs("", file));
+            Assert.Equal(new byte[] { }, stream.ToArray());
+        }
+
     }
 }

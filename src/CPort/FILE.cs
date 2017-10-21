@@ -64,7 +64,7 @@ namespace CPort
         public int Write(string value)
         {
             if (!CanWrite()) return -1;
-            if (string.IsNullOrWhiteSpace(value)) return 0;
+            if (string.IsNullOrEmpty(value)) return 0;
             var b = EncodeString(value);
             return Write(b, 0, b.Length);
         }

@@ -116,6 +116,33 @@ namespace CPort
             return r.Length;
         }
 
+        /// <summary>
+        /// fputc()
+        /// </summary>
+        public static int fputc(int c, FILE stream)
+        {
+            if (stream == null || c <= 0) return EOF;
+            if (stream.Write(((char)c).ToString()) == EOF) return EOF;
+            return c;
+        }
+
+        /// <summary>
+        /// fputs()
+        /// </summary>
+        public static int fputs(PChar s, FILE stream)
+        {
+            if (stream == null || s.IsNull) return EOF;
+            return stream.Write(s.GetString());
+        }
+
+        /// <summary>
+        /// putc()
+        /// </summary>
+        public static int putc(int c, FILE stream)
+        {
+            return fputc(c, stream);
+        }
+
     }
 #pragma warning restore IDE1006
 }
