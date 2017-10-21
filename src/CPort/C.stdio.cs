@@ -152,6 +152,14 @@ namespace CPort
         }
 
         /// <summary>
+        /// getc()
+        /// </summary>
+        public static int getc(FILE stream)
+        {
+            return fgetc(stream);
+        }
+
+        /// <summary>
         /// fputc()
         /// </summary>
         public static int fputc(int c, FILE stream)

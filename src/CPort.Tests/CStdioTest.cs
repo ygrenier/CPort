@@ -130,8 +130,8 @@ namespace CPort.Tests
             using (var file = new FILE(stream, CFileMode.Read, Encoding.ASCII))
             {
                 Assert.Equal('T', fgetc(file));
-                Assert.Equal('\n', fgetc(file));
-                Assert.Equal('T', fgetc(file));
+                Assert.Equal('\n', getc(file));
+                Assert.Equal('T', getc(file));
                 Assert.Equal(EOF, fgetc(file));
             }
 
