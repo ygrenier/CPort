@@ -268,5 +268,29 @@ namespace CPort.Tests
             Assert.Equal(-1, f.Read());
         }
 
+        [Fact]
+        public void UnreadChar()
+        {
+            var bytes = new byte[] { 195, 137, 116, 195, 169, 13, 10, 84, 101, 115, 116 };
+            var stream = new MemoryStream(bytes);
+            using (var file = new FILE(stream, CFileMode.Read, Encoding.UTF8))
+            {
+                Assert.Equal('É', file.Read());
+                Assert.Equal('t', file.Read());
+                Assert.True(file.UnreadChar('T'));
+                Assert.True(file.UnreadChar('É'));
+                Assert.Equal('É', file.Read());
+                Assert.Equal('T', file.Read());
+                Assert.Equal('é', file.Read());
+            }
+
+            stream = new MemoryStream(bytes);
+            using (var file = new FILE(stream, CFileMode.Write, Encoding.UTF8))
+            {
+                Assert.Equal(C.EOF, file.Read());
+                Assert.False(file.UnreadChar('T'));
+            }
+        }
+
     }
 }

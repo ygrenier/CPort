@@ -145,6 +145,16 @@ namespace CPort
         }
 
         /// <summary>
+        /// Place a char in the unread buffer
+        /// </summary>
+        public bool UnreadChar(char c)
+        {
+            if (!CanRead()) return false;
+            _ungetBuffer.Push(c);
+            return true;
+        }
+
+        /// <summary>
         /// Source of file
         /// </summary>
         public Stream Source { get; private set; }
