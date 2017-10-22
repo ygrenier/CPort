@@ -292,6 +292,7 @@ namespace CPort
                     if (c == EOF) break;
                     _buffer.Add((char)c);
                 }
+                _eof = _pos >= _buffer.Count;
             }
 
             /// <summary>
@@ -427,6 +428,8 @@ namespace CPort
 
                 // Clear any previous results
                 Results.Clear();
+                if (inp.Peek() == Parser.NullChar && inp.EndOfText)
+                    return EOF;
 
                 // Process input string as indicated in format string
                 while (!fmt.EndOfText && !inp.EndOfText)
@@ -933,12 +936,8 @@ namespace CPort
         /// </summary>
         public static int sscanf<T>(String input, String format, ref T r)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
-            int res = parser.Results.Count;
-            if (res > 0)
-                r = (T)parser.Results[0];
-            return res;
+            object dummy = null;
+            return sscanf(input, format, ref r, ref dummy, ref dummy, ref dummy, ref dummy, ref dummy);
         }
 
         /// <summary>
@@ -946,14 +945,8 @@ namespace CPort
         /// </summary>
         public static int sscanf<T1, T2>(String input, String format, ref T1 r1, ref T2 r2)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
-            int res = parser.Results.Count;
-            if (res > 0)
-                r1 = (T1)parser.Results[0];
-            if (res > 1)
-                r2 = (T2)parser.Results[1];
-            return res;
+            object dummy = null;
+            return sscanf(input, format, ref r1, ref r2, ref dummy, ref dummy, ref dummy, ref dummy);
         }
 
         /// <summary>
@@ -961,16 +954,8 @@ namespace CPort
         /// </summary>
         public static int sscanf<T1, T2, T3>(String input, String format, ref T1 r1, ref T2 r2, ref T3 r3)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
-            int res = parser.Results.Count;
-            if (res > 0)
-                r1 = (T1)parser.Results[0];
-            if (res > 1)
-                r2 = (T2)parser.Results[1];
-            if (res > 2)
-                r3 = (T3)parser.Results[2];
-            return res;
+            object dummy = null;
+            return sscanf(input, format, ref r1, ref r2, ref r3, ref dummy, ref dummy, ref dummy);
         }
 
         /// <summary>
@@ -978,18 +963,8 @@ namespace CPort
         /// </summary>
         public static int sscanf<T1, T2, T3, T4>(String input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
-            int res = parser.Results.Count;
-            if (res > 0)
-                r1 = (T1)parser.Results[0];
-            if (res > 1)
-                r2 = (T2)parser.Results[1];
-            if (res > 2)
-                r3 = (T3)parser.Results[2];
-            if (res > 3)
-                r4 = (T4)parser.Results[3];
-            return res;
+            object dummy = null;
+            return sscanf(input, format, ref r1, ref r2, ref r3, ref r4, ref dummy, ref dummy);
         }
 
         /// <summary>
@@ -997,20 +972,8 @@ namespace CPort
         /// </summary>
         public static int sscanf<T1, T2, T3, T4, T5>(String input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4, ref T5 r5)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
-            int res = parser.Results.Count;
-            if (res > 0)
-                r1 = (T1)parser.Results[0];
-            if (res > 1)
-                r2 = (T2)parser.Results[1];
-            if (res > 2)
-                r3 = (T3)parser.Results[2];
-            if (res > 3)
-                r4 = (T4)parser.Results[3];
-            if (res > 4)
-                r5 = (T5)parser.Results[4];
-            return res;
+            object dummy = null;
+            return sscanf(input, format, ref r1, ref r2, ref r3, ref r4, ref r5, ref dummy);
         }
 
         /// <summary>
@@ -1019,7 +982,7 @@ namespace CPort
         public static int sscanf<T1, T2, T3, T4, T5, T6>(String input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4, ref T5 r5, ref T6 r6)
         {
             var parser = new ScanFormatted();
-            parser.Parse(input, format);
+            if (parser.Parse(input, format) < 0) return EOF;
             int res = parser.Results.Count;
             if (res > 0)
                 r1 = (T1)parser.Results[0];
@@ -1037,14 +1000,9 @@ namespace CPort
         }
         #endregion
 
-        #region sscanf with pointer
-        /// <summary>
-        /// sscanf 
-        /// </summary>
-        public static int sscanf(string input, string format, params IPointer[] results)
+        #region sscanf with pointers
+        private static int FillPointersResult(IPointer[] results, ScanFormatted parser)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
             int res = parser.Results.Count;
             for (int i = 0, cnt = Math.Min(res, results?.Length ?? 0); i < cnt; i++)
             {
@@ -1091,6 +1049,16 @@ namespace CPort
             }
             return res;
         }
+
+        /// <summary>
+        /// sscanf 
+        /// </summary>
+        public static int sscanf(string input, string format, params IPointer[] results)
+        {
+            var parser = new ScanFormatted();
+            if (parser.Parse(input, format) < 0) return EOF;
+            return FillPointersResult(results, parser);
+        }
         #endregion
 
         #region fscanf with ref var
@@ -1099,12 +1067,8 @@ namespace CPort
         /// </summary>
         public static int fscanf<T>(FILE input, String format, ref T r)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
-            int res = parser.Results.Count;
-            if (res > 0)
-                r = (T)parser.Results[0];
-            return res;
+            object dummy = null;
+            return fscanf(input, format, ref r, ref dummy, ref dummy, ref dummy, ref dummy, ref dummy);
         }
 
         /// <summary>
@@ -1112,14 +1076,8 @@ namespace CPort
         /// </summary>
         public static int fscanf<T1, T2>(FILE input, String format, ref T1 r1, ref T2 r2)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
-            int res = parser.Results.Count;
-            if (res > 0)
-                r1 = (T1)parser.Results[0];
-            if (res > 1)
-                r2 = (T2)parser.Results[1];
-            return res;
+            object dummy = null;
+            return fscanf(input, format, ref r1, ref r2, ref dummy, ref dummy, ref dummy, ref dummy);
         }
 
         /// <summary>
@@ -1127,16 +1085,8 @@ namespace CPort
         /// </summary>
         public static int fscanf<T1, T2, T3>(FILE input, String format, ref T1 r1, ref T2 r2, ref T3 r3)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
-            int res = parser.Results.Count;
-            if (res > 0)
-                r1 = (T1)parser.Results[0];
-            if (res > 1)
-                r2 = (T2)parser.Results[1];
-            if (res > 2)
-                r3 = (T3)parser.Results[2];
-            return res;
+            object dummy = null;
+            return fscanf(input, format, ref r1, ref r2, ref r3, ref dummy, ref dummy, ref dummy);
         }
 
         /// <summary>
@@ -1144,18 +1094,8 @@ namespace CPort
         /// </summary>
         public static int fscanf<T1, T2, T3, T4>(FILE input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
-            int res = parser.Results.Count;
-            if (res > 0)
-                r1 = (T1)parser.Results[0];
-            if (res > 1)
-                r2 = (T2)parser.Results[1];
-            if (res > 2)
-                r3 = (T3)parser.Results[2];
-            if (res > 3)
-                r4 = (T4)parser.Results[3];
-            return res;
+            object dummy = null;
+            return fscanf(input, format, ref r1, ref r2, ref r3, ref r4, ref dummy, ref dummy);
         }
 
         /// <summary>
@@ -1163,20 +1103,8 @@ namespace CPort
         /// </summary>
         public static int fscanf<T1, T2, T3, T4, T5>(FILE input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4, ref T5 r5)
         {
-            var parser = new ScanFormatted();
-            parser.Parse(input, format);
-            int res = parser.Results.Count;
-            if (res > 0)
-                r1 = (T1)parser.Results[0];
-            if (res > 1)
-                r2 = (T2)parser.Results[1];
-            if (res > 2)
-                r3 = (T3)parser.Results[2];
-            if (res > 3)
-                r4 = (T4)parser.Results[3];
-            if (res > 4)
-                r5 = (T5)parser.Results[4];
-            return res;
+            object dummy = null;
+            return fscanf(input, format, ref r1, ref r2, ref r3, ref r4, ref r5, ref dummy);
         }
 
         /// <summary>
@@ -1185,7 +1113,7 @@ namespace CPort
         public static int fscanf<T1, T2, T3, T4, T5, T6>(FILE input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4, ref T5 r5, ref T6 r6)
         {
             var parser = new ScanFormatted();
-            parser.Parse(input, format);
+            if (parser.Parse(input, format) < 0) return EOF;
             int res = parser.Results.Count;
             if (res > 0)
                 r1 = (T1)parser.Results[0];
@@ -1203,6 +1131,17 @@ namespace CPort
         }
         #endregion
 
+        #region fscanf with pointers
+        /// <summary>
+        /// fscanf 
+        /// </summary>
+        public static int fscanf(FILE input, string format, params IPointer[] results)
+        {
+            var parser = new ScanFormatted();
+            if (parser.Parse(input, format) < 0) return EOF;
+            return FillPointersResult(results, parser);
+        }
+        #endregion
     }
 #pragma warning restore IDE1006
 }

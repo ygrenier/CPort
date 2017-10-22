@@ -15,11 +15,11 @@ namespace CPort.Tests
             Pointer<char> pr1 = new Pointer<char>(new char[] { ' ', ' ', ' ' });
             PChar pr2 = new PChar(new char[] { ' ', ' ', ' ' });
 
-            Assert.Equal(0, C.sscanf("", "%c", ref r1));
+            Assert.Equal(-1, C.sscanf("", "%c", ref r1));
             Assert.Equal(' ', r1);
-            Assert.Equal(0, C.sscanf("", "%c", pr1));
+            Assert.Equal(-1, C.sscanf("", "%c", pr1));
             Assert.Equal(new char[] { ' ', ' ', ' ' }, pr1.Source);
-            Assert.Equal(0, C.sscanf("", "%c", pr2));
+            Assert.Equal(-1, C.sscanf("", "%c", pr2));
             Assert.Equal(new char[] { ' ', ' ', ' ' }, pr2.Source);
 
             Assert.Equal(0, C.sscanf("1", "%2c", ref r1));
@@ -86,9 +86,9 @@ namespace CPort.Tests
         {
             int r1 = 0; Pointer<Int32> pr1 = new Pointer<int>(3);
 
-            Assert.Equal(0, C.sscanf("", "%d", ref r1));
+            Assert.Equal(-1, C.sscanf("", "%d", ref r1));
             Assert.Equal(0, r1);
-            Assert.Equal(0, C.sscanf("", "%d", pr1));
+            Assert.Equal(-1, C.sscanf("", "%d", pr1));
             Assert.Equal(new int[] { 0, 0, 0 }, pr1.Source);
 
             Assert.Equal(0, C.sscanf("[ ", "[%d", ref r1));
@@ -142,9 +142,14 @@ namespace CPort.Tests
         {
             uint r1 = 0; Pointer<UInt32> pr1 = new Pointer<uint>(3);
 
-            Assert.Equal(0, C.sscanf("", "%u", ref r1));
+            Assert.Equal(-1, C.sscanf("", "%u", ref r1));
             Assert.Equal((uint)0, r1);
-            Assert.Equal(0, C.sscanf("", "%u", pr1));
+            Assert.Equal(-1, C.sscanf("", "%u", pr1));
+            Assert.Equal(new uint[] { 0, 0, 0 }, pr1.Source);
+
+            Assert.Equal(0, C.sscanf(" ", "%u", ref r1));
+            Assert.Equal((uint)0, r1);
+            Assert.Equal(0, C.sscanf(" ", "%u", pr1));
             Assert.Equal(new uint[] { 0, 0, 0 }, pr1.Source);
 
             Assert.Equal(1, C.sscanf("  123 ", "%u", ref r1));
@@ -235,9 +240,9 @@ namespace CPort.Tests
             Assert.Equal(new double[] { 9876.543, 0, 0 }, pr2.Source);
 
             r1 = 0; pr1 = new Pointer<float>(3);
-            Assert.Equal(0, C.sscanf("", "%f", ref r1));
+            Assert.Equal(-1, C.sscanf("", "%f", ref r1));
             Assert.Equal(0f, r1);
-            Assert.Equal(0, C.sscanf("", "%f", pr1));
+            Assert.Equal(-1, C.sscanf("", "%f", pr1));
             Assert.Equal(new float[] { 0, 0, 0 }, pr1.Source);
 
             Assert.Equal(0, C.sscanf("[ ", "[%f", ref r1));
@@ -532,73 +537,80 @@ namespace CPort.Tests
         public void TestSScanfWithPointers()
         {
             Pointer<Int32> r1 = new Pointer<int>(new int[] { 0 }), r2 = new Pointer<int>(new int[] { 0 });
-            PChar r3 = C.NULL, r4 = C.NULL;
+            PChar r3 = C.NULL; Pointer<char> r4 = C.NULL;
             Pointer<Int32> r5 = new Pointer<int>(new int[] { 0 }), r6 = new Pointer<int>(new int[] { 0 });
 
             String test = "Copyright 2009-2011 CompanyName (Multi-Word message) - 123 - 987";
 
-            r1.Value = r2.Value = 0; r3 = new PChar(255); r4 = new PChar(255);
+            r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
             Assert.Equal(1, C.sscanf(test, "Copyright %d", r1, r2, r3, r4, r5, r6));
             Assert.Equal(2009, r1);
             Assert.Equal(0, r2);
             Assert.Equal(string.Empty, r3.GetString());
-            Assert.Equal(string.Empty, r4.GetString());
+            Assert.Equal(string.Empty, ((PChar)r4).GetString());
             Assert.Equal(0, r5);
             Assert.Equal(0, r6);
 
-            r1.Value = r2.Value = 0; r3 = new PChar(255); r4 = new PChar(255);
+            r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
             Assert.Equal(2, C.sscanf(test, "Copyright %d-%d", r1, r2, r3, r4, r5, r6));
             Assert.Equal(2009, r1);
             Assert.Equal(2011, r2);
             Assert.Equal(string.Empty, r3.GetString());
-            Assert.Equal(string.Empty, r4.GetString());
+            Assert.Equal(string.Empty, ((PChar)r4).GetString());
             Assert.Equal(0, r5);
             Assert.Equal(0, r6);
 
-            r1.Value = r2.Value = 0; r3 = new PChar(255); r4 = new PChar(255);
+            r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
             Assert.Equal(3, C.sscanf(test, "Copyright %d-%d %s", r1, r2, r3, r4, r5, r6));
             Assert.Equal(2009, r1);
             Assert.Equal(2011, r2);
             Assert.Equal("CompanyName", r3.GetString());
-            Assert.Equal(string.Empty, r4.GetString());
+            Assert.Equal(string.Empty, ((PChar)r4).GetString());
             Assert.Equal(0, r5);
             Assert.Equal(0, r6);
 
-            r1.Value = r2.Value = 0; r3 = new PChar(255); r4 = new PChar(255);
+            r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
             Assert.Equal(4, C.sscanf(test, "Copyright %d-%d %s (%[^)]", r1, r2, r3, r4, r5, r6));
             Assert.Equal(2009, r1);
             Assert.Equal(2011, r2);
             Assert.Equal("CompanyName", r3.GetString());
-            Assert.Equal("Multi-Word message", r4.GetString());
+            Assert.Equal("Multi-Word message", ((PChar)r4).GetString());
             Assert.Equal(0, r5);
             Assert.Equal(0, r6);
 
-            r1.Value = r2.Value = 0; r3 = new PChar(255); r4 = new PChar(255);
+            r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
             Assert.Equal(5, C.sscanf(test, "Copyright %d-%d %s (%[^)] - %d", r1, r2, r3, r4, r5, r6));
             Assert.Equal(2009, r1);
             Assert.Equal(2011, r2);
             Assert.Equal("CompanyName", r3.GetString());
-            Assert.Equal("Multi-Word message", r4.GetString());
+            Assert.Equal("Multi-Word message", ((PChar)r4).GetString());
             Assert.Equal(123, r5);
             Assert.Equal(0, r6);
 
-            r1.Value = r2.Value = 0; r3 = new PChar(255); r4 = new PChar(255);
+            r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
             Assert.Equal(6, C.sscanf(test, "Copyright %d-%d %s (%[^)] - %d - %d", r1, r2, r3, r4, r5, r6));
             Assert.Equal(2009, r1);
             Assert.Equal(2011, r2);
             Assert.Equal("CompanyName", r3.GetString());
-            Assert.Equal("Multi-Word message", r4.GetString());
+            Assert.Equal("Multi-Word message", ((PChar)r4).GetString());
             Assert.Equal(123, r5);
             Assert.Equal(987, r6);
 
-            r1.Value = r2.Value = 0; r3 = new PChar(255); r4 = new PChar(255);
+            r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
             Assert.Equal(6, C.sscanf(test, "Copyright %d-%d %s (%[^)] - %d - %d", r6, r5, r2, r1, r4, r3));
             Assert.Equal(0, r1);
             Assert.Equal(0, r2);
             Assert.Equal(string.Empty, r3.GetString());
-            Assert.Equal(string.Empty, r4.GetString());
+            Assert.Equal(string.Empty, ((PChar)r4).GetString());
             Assert.Equal(2011, r5);
             Assert.Equal(2009, r6);
+
+            Assert.Equal(6, C.sscanf(test, "Copyright %d-%d %s (%[^)] - %d - %d", null));
+            Assert.Equal(6, C.sscanf(test, "Copyright %d-%d %s (%[^)] - %d - %d",
+                new Pointer<sbyte>(1), new Pointer<byte>(1), new Pointer<ushort>(1), 
+                new Pointer<short>(1), new Pointer<ulong>(1), new Pointer<long>(1)));
+            Assert.Equal(6, C.sscanf(test, "Copyright %d-%d %s (%[^)] - %d - %d",
+                new Pointer<uint>(1), new Pointer<float>(1), new Pointer<double>(1)));
         }
 
         [Fact]
@@ -672,6 +684,149 @@ namespace CPort.Tests
                 Assert.Equal("Multi-Word message", r4);
                 Assert.Equal(123, r5);
                 Assert.Equal(987, r6);
+            }
+
+            using (var file = new FILE(new MemoryStream(Encoding.ASCII.GetBytes("abc")), CFileMode.Read, Encoding.ASCII))
+            {
+                r1 = r2 = r5 = r6 = 0; r3 = r4 = null;
+                Assert.Equal(0, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d - %d", ref r1, ref r2, ref r3, ref r4, ref r5, ref r6));
+                Assert.Equal(0, r1);
+                Assert.Equal(0, r2);
+                Assert.Equal(null, r3);
+                Assert.Equal(null, r4);
+                Assert.Equal(0, r5);
+                Assert.Equal(0, r6);
+            }
+
+            using (var file = new FILE(new MemoryStream(), CFileMode.Read, Encoding.ASCII))
+            {
+                r1 = r2 = r5 = r6 = 0; r3 = r4 = null;
+                Assert.Equal(-1, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d - %d", ref r1, ref r2, ref r3, ref r4, ref r5, ref r6));
+                Assert.Equal(0, r1);
+                Assert.Equal(0, r2);
+                Assert.Equal(null, r3);
+                Assert.Equal(null, r4);
+                Assert.Equal(0, r5);
+                Assert.Equal(0, r6);
+            }
+        }
+
+        [Fact]
+        public void TestFScanfWithPointers()
+        {
+            Pointer<Int32> r1 = new Pointer<int>(new int[] { 0 }), r2 = new Pointer<int>(new int[] { 0 });
+            PChar r3 = C.NULL; Pointer<char> r4 = C.NULL;
+            Pointer<Int32> r5 = new Pointer<int>(new int[] { 0 }), r6 = new Pointer<int>(new int[] { 0 });
+
+            String test = "Copyright 2009-2011 CompanyName (Multi-Word message) - 123 - 987";
+            byte[] buffer = Encoding.ASCII.GetBytes(test);
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
+                Assert.Equal(1, C.fscanf(file, "Copyright %d", r1, r2, r3, r4, r5, r6));
+                Assert.Equal(2009, r1);
+                Assert.Equal(0, r2);
+                Assert.Equal(string.Empty, r3.GetString());
+                Assert.Equal(string.Empty, ((PChar)r4).GetString());
+                Assert.Equal(0, r5);
+                Assert.Equal(0, r6);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
+                Assert.Equal(2, C.fscanf(file, "Copyright %d-%d", r1, r2, r3, r4, r5, r6));
+                Assert.Equal(2009, r1);
+                Assert.Equal(2011, r2);
+                Assert.Equal(string.Empty, r3.GetString());
+                Assert.Equal(string.Empty, ((PChar)r4).GetString());
+                Assert.Equal(0, r5);
+                Assert.Equal(0, r6);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
+                Assert.Equal(3, C.fscanf(file, "Copyright %d-%d %s", r1, r2, r3, r4, r5, r6));
+                Assert.Equal(2009, r1);
+                Assert.Equal(2011, r2);
+                Assert.Equal("CompanyName", r3.GetString());
+                Assert.Equal(string.Empty, ((PChar)r4).GetString());
+                Assert.Equal(0, r5);
+                Assert.Equal(0, r6);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
+                Assert.Equal(4, C.fscanf(file, "Copyright %d-%d %s (%[^)]", r1, r2, r3, r4, r5, r6));
+                Assert.Equal(2009, r1);
+                Assert.Equal(2011, r2);
+                Assert.Equal("CompanyName", r3.GetString());
+                Assert.Equal("Multi-Word message", ((PChar)r4).GetString());
+                Assert.Equal(0, r5);
+                Assert.Equal(0, r6);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
+                Assert.Equal(5, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d", r1, r2, r3, r4, r5, r6));
+                Assert.Equal(2009, r1);
+                Assert.Equal(2011, r2);
+                Assert.Equal("CompanyName", r3.GetString());
+                Assert.Equal("Multi-Word message", ((PChar)r4).GetString());
+                Assert.Equal(123, r5);
+                Assert.Equal(0, r6);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
+                Assert.Equal(6, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d - %d", r1, r2, r3, r4, r5, r6));
+                Assert.Equal(2009, r1);
+                Assert.Equal(2011, r2);
+                Assert.Equal("CompanyName", r3.GetString());
+                Assert.Equal("Multi-Word message", ((PChar)r4).GetString());
+                Assert.Equal(123, r5);
+                Assert.Equal(987, r6);
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
+                Assert.Equal(6, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d - %d", r6, r5, r2, r1, r4, r3));
+                Assert.Equal(0, r1);
+                Assert.Equal(0, r2);
+                Assert.Equal(string.Empty, r3.GetString());
+                Assert.Equal(string.Empty, ((PChar)r4).GetString());
+                Assert.Equal(2011, r5);
+                Assert.Equal(2009, r6);
+            }
+
+            using (var file = new FILE(new MemoryStream(), CFileMode.Read, Encoding.ASCII))
+            {
+                r1.Value = r2.Value = r5.Value = r6.Value = 0; r3 = new PChar(255); r4 = new Pointer<char>(255);
+                Assert.Equal(-1, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d - %d", r6, r5, r2, r1, r4, r3));
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                Assert.Equal(6, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d - %d", null));
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                Assert.Equal(6, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d - %d",
+                new Pointer<sbyte>(1), new Pointer<byte>(1), new Pointer<ushort>(1),
+                new Pointer<short>(1), new Pointer<ulong>(1), new Pointer<long>(1)));
+            }
+
+            using (var file = new FILE(new MemoryStream(buffer), CFileMode.Read, Encoding.ASCII))
+            {
+                Assert.Equal(6, C.fscanf(file, "Copyright %d-%d %s (%[^)] - %d - %d",
+                new Pointer<uint>(1), new Pointer<float>(1), new Pointer<double>(1)));
             }
         }
 
