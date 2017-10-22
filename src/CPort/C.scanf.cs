@@ -18,6 +18,7 @@ using System.Text;
 
 namespace CPort
 {
+#pragma warning disable IDE1006
     /// <summary>
     /// Class that provides functionality of the standard C library sscanf()
     /// function.
@@ -1036,6 +1037,64 @@ namespace CPort
         }
         #endregion
 
+        #region sscanf with pointer
+        /// <summary>
+        /// sscanf 
+        /// </summary>
+        public static int sscanf(string input, string format, params IPointer[] results)
+        {
+            var parser = new ScanFormatted();
+            parser.Parse(input, format);
+            int res = parser.Results.Count;
+            for (int i = 0, cnt = Math.Min(res, results?.Length ?? 0); i < cnt; i++)
+            {
+                IPointer pt = results[i];
+                object pr = parser.Results[i];
+                if (pt is Pointer<char> pc1 && pr is string rs1)
+                    strcpy(pc1, rs1);
+                else if (pt is Pointer<char> pc2 && pr is IEnumerable<char> rs2)
+                {
+                    var arr = rs2.ToArray();
+                    strncpy(pc2, arr, arr.Length);
+                }
+                else if (pt is PChar pc3 && pr is string rs3)
+                    strcpy(pc3, rs3);
+                else if (pt is PChar pc4 && pr is IEnumerable<char> rs4)
+                {
+                    var arr = rs4.ToArray();
+                    strncpy(pc4, arr, arr.Length);
+                }
+                else if (pt is Pointer<char> pc5 && pr is char rc1)
+                    pc5.Value = rc1;
+                else if (pt is PChar pc6 && pr is char rc2)
+                    pc6.Value = rc2;
+                else if (pt is Pointer<byte> pb1 && pr is byte rb1)
+                    pb1.Value = rb1;
+                else if (pt is Pointer<sbyte> pb2 && pr is sbyte rb2)
+                    pb2.Value = rb2;
+                else if (pt is Pointer<Int16> pi1 && pr is Int16 ri1)
+                    pi1.Value = ri1;
+                else if (pt is Pointer<UInt16> pi2 && pr is UInt16 ri2)
+                    pi2.Value = ri2;
+                else if (pt is Pointer<Int32> pi3 && pr is Int32 ri3)
+                    pi3.Value = ri3;
+                else if (pt is Pointer<UInt32> pi4 && pr is UInt32 ri4)
+                    pi4.Value = ri4;
+                else if (pt is Pointer<Int64> pi5 && pr is Int64 ri5)
+                    pi5.Value = ri5;
+                else if (pt is Pointer<UInt64> pi6 && pr is UInt64 ri6)
+                    pi6.Value = ri6;
+                else if (pt is Pointer<float> pf1 && pr is float rf1)
+                    pf1.Value = rf1;
+                else if (pt is Pointer<double> pf2 && pr is double rf2)
+                    pf2.Value = rf2;
+                else
+                    return i;
+            }
+            return res;
+        }
+        #endregion
+
         #region fscanf with ref var
         /// <summary>
         /// fscanf with 1 result
@@ -1147,4 +1206,5 @@ namespace CPort
         #endregion
 
     }
+#pragma warning restore IDE1006
 }
