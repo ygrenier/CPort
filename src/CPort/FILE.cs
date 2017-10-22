@@ -12,9 +12,8 @@ namespace CPort
     /// </summary>
     public sealed class FILE : IDisposable
     {
-        Decoder _decoder = null;
-        byte[] _decodeBuffer = new byte[12];
-        char[] _charsDecoded = new char[12];
+        BinaryReader _breader;
+        BinaryWriter _bwriter;
         Stack<char> _ungetBuffer = new Stack<char>();
 
         /// <summary>
@@ -22,9 +21,17 @@ namespace CPort
         /// </summary>
         public FILE(Stream source, CFileMode mode, Encoding encoding)
         {
+            Init(source, mode, encoding);
+        }
+
+        private void Init(Stream source, CFileMode mode, Encoding encoding)
+        {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Encoding = mode.HasFlag(CFileMode.Binary) ? encoding : encoding ?? throw new ArgumentNullException(nameof(encoding));
-            _decoder = Encoding?.GetDecoder();
+            if (mode.HasFlag(CFileMode.Read) | mode.HasFlag(CFileMode.Update))
+                _breader = new BinaryReader(Source, Encoding ?? Encoding.UTF8);
+            if (mode.HasFlag(CFileMode.Write) | mode.HasFlag(CFileMode.Append) | mode.HasFlag(CFileMode.Update))
+                _bwriter = new BinaryWriter(Source, Encoding ?? Encoding.UTF8);
             Mode = mode;
         }
 
@@ -33,9 +40,12 @@ namespace CPort
         /// </summary>
         public void Dispose()
         {
+            _breader?.Dispose();
+            _breader = null;
+            _bwriter?.Dispose();
+            _bwriter = null;
             Source?.Dispose();
             Source = null;
-            _decoder = null;
             Encoding = null;
             Mode = null;
         }
@@ -46,10 +56,7 @@ namespace CPort
         public void Reopen(Stream source, CFileMode mode, Encoding encoding)
         {
             if (Source != null) Dispose();
-            Source = source ?? throw new ArgumentNullException(nameof(source));
-            Encoding = mode.HasFlag(CFileMode.Binary) ? encoding : encoding ?? throw new ArgumentNullException(nameof(encoding));
-            _decoder = Encoding?.GetDecoder();
-            Mode = mode;
+            Init(source, mode, encoding);
         }
 
         /// <summary>
@@ -68,18 +75,8 @@ namespace CPort
         char? ReadNextChar()
         {
             if (_ungetBuffer.Count > 0) return _ungetBuffer.Pop();
-            int c, byteIndex = 0, byteCount = 1;
-            _decoder.Convert(_decodeBuffer, 0, 0, _charsDecoded, 0, _charsDecoded.Length, true, out int bytesUsed, out int charsUsed, out bool completed);
-            while ((c = Source.ReadByte()) != -1)
-            {
-                _decodeBuffer[byteIndex] = (byte)c;
-                _decoder.Convert(_decodeBuffer, byteIndex, byteCount
-                    , _charsDecoded, 0, _charsDecoded.Length, false
-                    , out bytesUsed, out charsUsed, out completed);
-                if (charsUsed > 0) return _charsDecoded[0];
-                byteIndex++;
-            }
-            return null;
+            int c = _breader.Read();
+            return c == -1 ? (char?)null : (char)c;
         }
 
         /// <summary>
@@ -128,7 +125,116 @@ namespace CPort
         public int Write(byte[] buffer, int offset, int count)
         {
             if (!CanWrite()) return C.EOF;
-            Source.Write(buffer, offset, count);
+            _bwriter.Write(buffer, offset, count);
+            return count;
+        }
+
+        /// <summary>
+        /// Write a char buffer int the file
+        /// </summary>
+        public int Write(char[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return C.EOF;
+            _bwriter.Write(buffer, offset, count);
+            return count;
+        }
+
+        /// <summary>
+        /// Write a sbyte buffer int the file
+        /// </summary>
+        public int Write(sbyte[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return C.EOF;
+            for (int i = 0; i < count; i++)
+                _bwriter.Write(buffer[offset + i]);
+            return count;
+        }
+
+        /// <summary>
+        /// Write a ushort buffer int the file
+        /// </summary>
+        public int Write(ushort[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return C.EOF;
+            for (int i = 0; i < count; i++)
+                _bwriter.Write(buffer[offset + i]);
+            return count;
+        }
+
+        /// <summary>
+        /// Write a short buffer int the file
+        /// </summary>
+        public int Write(short[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return C.EOF;
+            for (int i = 0; i < count; i++)
+                _bwriter.Write(buffer[offset + i]);
+            return count;
+        }
+
+        /// <summary>
+        /// Write a uint buffer int the file
+        /// </summary>
+        public int Write(uint[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return C.EOF;
+            for (int i = 0; i < count; i++)
+                _bwriter.Write(buffer[offset + i]);
+            return count;
+        }
+
+        /// <summary>
+        /// Write a int buffer int the file
+        /// </summary>
+        public int Write(int[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return C.EOF;
+            for (int i = 0; i < count; i++)
+                _bwriter.Write(buffer[offset + i]);
+            return count;
+        }
+
+        /// <summary>
+        /// Write a ulong buffer int the file
+        /// </summary>
+        public int Write(ulong[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return C.EOF;
+            for (int i = 0; i < count; i++)
+                _bwriter.Write(buffer[offset + i]);
+            return count;
+        }
+
+        /// <summary>
+        /// Write a long buffer int the file
+        /// </summary>
+        public int Write(long[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return C.EOF;
+            for (int i = 0; i < count; i++)
+                _bwriter.Write(buffer[offset + i]);
+            return count;
+        }
+
+        /// <summary>
+        /// Write a float buffer int the file
+        /// </summary>
+        public int Write(float[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return C.EOF;
+            for (int i = 0; i < count; i++)
+                _bwriter.Write(buffer[offset + i]);
+            return count;
+        }
+
+        /// <summary>
+        /// Write a double buffer int the file
+        /// </summary>
+        public int Write(double[] buffer, int offset, int count)
+        {
+            if (!CanWrite()) return C.EOF;
+            for (int i = 0; i < count; i++)
+                _bwriter.Write(buffer[offset + i]);
             return count;
         }
 
@@ -142,6 +248,204 @@ namespace CPort
             var c = ReadChar();
             if (!c.HasValue) return C.EOF;
             return c.Value;
+        }
+
+        /// <summary>
+        /// Read a string
+        /// </summary>
+        public string ReadString(int count)
+        {
+            var buffer = new char[count];
+            var r = Read(buffer, 0, count);
+            if (r < 0) return null;
+            return new string(buffer, 0, r);
+        }
+
+        /// <summary>
+        /// Read a byte buffer in the file
+        /// </summary>
+        public int Read(byte[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadByte();
+                }
+                catch { return i; }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Read a char buffer int the file
+        /// </summary>
+        public int Read(char[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadChar();
+                }
+                catch { return i; }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Read a sbyte buffer int the file
+        /// </summary>
+        public int Read(sbyte[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadSByte();
+                }
+                catch { return i; }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Read a ushort buffer int the file
+        /// </summary>
+        public int Read(ushort[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadUInt16();
+                }
+                catch { return i; }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Read a short buffer int the file
+        /// </summary>
+        public int Read(short[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadInt16();
+                }
+                catch { return i; }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Read a uint buffer int the file
+        /// </summary>
+        public int Read(uint[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadUInt32();
+                }
+                catch { return i; }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Read a int buffer int the file
+        /// </summary>
+        public int Read(int[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadInt32();
+                }
+                catch { return i; }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Read a ulong buffer int the file
+        /// </summary>
+        public int Read(ulong[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadUInt64();
+                }
+                catch { return i; }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Read a long buffer int the file
+        /// </summary>
+        public int Read(long[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadInt64();
+                }
+                catch { return i; }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Read a float buffer int the file
+        /// </summary>
+        public int Read(float[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadSingle();
+                }
+                catch { return i; }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Read a double buffer int the file
+        /// </summary>
+        public int Read(double[] buffer, int offset, int count)
+        {
+            if (!CanRead()) return C.EOF;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    buffer[offset + i] = _breader.ReadDouble();
+                }
+                catch { return i; }
+            }
+            return count;
         }
 
         /// <summary>
@@ -169,6 +473,10 @@ namespace CPort
         /// </summary>
         public CFileMode? Mode { get; private set; }
 
+        /// <summary>
+        /// Position
+        /// </summary>
+        public long Position => Source?.Position ?? -1L;
     }
 
     /// <summary>

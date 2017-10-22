@@ -194,6 +194,11 @@ namespace CPort
             if (stream == null || c == EOF) return EOF;
             return stream.UnreadChar((char)c) ? c : EOF;
         }
+
+        //public static int fread(IPointer ptr, int nobj, FILE stream)
+        //{
+        //    System.IO.BinaryReader
+        //}
     }
 #pragma warning restore IDE1006
 }
