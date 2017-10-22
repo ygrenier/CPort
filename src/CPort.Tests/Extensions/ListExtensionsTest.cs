@@ -29,5 +29,17 @@ namespace CPort.Tests.Extensions
             Assert.True(p.IsNull);
             Assert.Null(p.Source);
         }
+
+        [Fact]
+        public void CopyTo()
+        {
+            int[] source = new int[] { 1, 3, 5, 7 };
+            Pointer<int> dest = new int[10];
+
+            source.CopyTo(dest + 5, 2);
+            Assert.Equal(new int[] { 0, 0, 0, 0, 0, 1, 3, 0, 0, 0 }, dest.Source);
+            source.CopyTo(dest + 3);
+            Assert.Equal(new int[] { 0, 0, 0, 1, 3, 5, 7, 0, 0, 0 }, dest.Source);
+        }
     }
 }

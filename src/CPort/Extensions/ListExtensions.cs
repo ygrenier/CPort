@@ -16,5 +16,20 @@ namespace CPort
         {
             return new Pointer<T>(source);
         }
+
+        /// <summary>
+        /// Copy a list to a pointer
+        /// </summary>
+        public static void CopyTo<T>(this IList<T> source, Pointer<T> dest, int count = -1)
+        {
+            var sp = source.GetPointer();
+            if (count < 0) count = source.Count;
+            while (count-- > 0)
+            {
+                dest.Value = sp++;
+                dest++;
+            }
+        }
+
     }
 }
