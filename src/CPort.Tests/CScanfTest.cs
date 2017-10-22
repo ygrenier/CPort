@@ -592,7 +592,7 @@ namespace CPort.Tests
             Assert.Equal(987, r6);
 
             r1.Value = r2.Value = 0; r3 = new PChar(255); r4 = new PChar(255);
-            Assert.Equal(2, C.sscanf(test, "Copyright %d-%d %s (%[^)] - %d - %d", r6, r5, r2, r1, r4, r3));
+            Assert.Equal(6, C.sscanf(test, "Copyright %d-%d %s (%[^)] - %d - %d", r6, r5, r2, r1, r4, r3));
             Assert.Equal(0, r1);
             Assert.Equal(0, r2);
             Assert.Equal(string.Empty, r3.GetString());

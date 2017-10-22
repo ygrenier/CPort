@@ -1088,8 +1088,6 @@ namespace CPort
                     pf1.Value = rf1;
                 else if (pt is Pointer<double> pf2 && pr is double rf2)
                     pf2.Value = rf2;
-                else
-                    return i;
             }
             return res;
         }
