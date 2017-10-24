@@ -5,6 +5,7 @@ using System.Text;
 using Xunit;
 using Moq;
 using System.IO;
+using System.Linq;
 
 namespace CPort.Tests
 {
@@ -364,6 +365,153 @@ namespace CPort.Tests
             stream = new MemoryStream(bytes);
             using (var file = new FILE(stream, CFileMode.Write, Encoding.UTF8))
                 Assert.Equal(EOF, ungetc('t', file));
+        }
+
+        [Fact]
+        public void Fwrite()
+        {
+            var stream = new MemoryStream();
+            using (var file = new FILE(stream, CFileMode.Write, Encoding.UTF8))
+            {
+                Assert.Equal(3, fwrite("Été", 3, file));
+                Assert.Equal(5, file.Position);
+                Assert.Equal(2, fwrite(new int[] { 1, 2 }, 2, file));
+                Assert.Equal(13, file.Position);
+                Assert.Equal(3, fwrite(new List<char>(new char[] { 'É', 't', 'é' }).GetPointer(), 3, file));
+                Assert.Equal(18, file.Position);
+                Assert.Equal(2, fwrite(new uint[] { 3, 4 }, 2, file));
+                Assert.Equal(26, file.Position);
+                Assert.Equal(2, fwrite(new byte[] { 5, 6 }, 2, file));
+                Assert.Equal(28, file.Position);
+                Assert.Equal(2, fwrite(new sbyte[] { 7, 8 }, 2, file));
+                Assert.Equal(30, file.Position);
+                Assert.Equal(2, fwrite(new short[] { 9, 10 }, 2, file));
+                Assert.Equal(34, file.Position);
+                Assert.Equal(2, fwrite(new ushort[] { 11, 12 }, 2, file));
+                Assert.Equal(38, file.Position);
+                Assert.Equal(2, fwrite(new long[] { 13, 14 }, 2, file));
+                Assert.Equal(54, file.Position);
+                Assert.Equal(2, fwrite(new ulong[] { 15, 17 }, 2, file));
+                Assert.Equal(70, file.Position);
+                Assert.Equal(2, fwrite(new float[] { 13.4f, 14.5f }, 2, file));
+                Assert.Equal(78, file.Position);
+                Assert.Equal(2, fwrite(new double[] { 15.6f, 16.7f }, 2, file));
+                Assert.Equal(94, file.Position);
+
+                Assert.Equal(0, fwrite(new Pointer<int>(), 5, file));
+                Assert.Equal(94, file.Position);
+                Assert.Equal(0, fwrite(new uint[] { 3, 4 }, 2, null));
+                Assert.Equal(94, file.Position);
+            }
+            int skip = 0;// + 5 + 4 + 4 + 5 + 4 + 4 + 1 + 1 + 1 + 1 + 2 + 2 + 2 + 2 + 8 + 8 + 4 + 4 + 8 + 8;
+            byte[] expected = new byte[] {
+                195, 137, 116, 195, 169,
+                1,0,0,0, 2,0,0,0,
+                195, 137, 116, 195, 169,
+                3,0,0,0, 4,0,0,0,
+                5, 6,
+                7, 8,
+                9,0, 10,0,
+                11,0, 12,0,
+                13,0,0,0,0,0,0,0,
+                14,0,0,0,0,0,0,0,
+                15,0,0,0,0,0,0,0,
+                17,0,0,0,0,0,0,0,
+                102, 102, 86, 65,
+                0, 0, 104, 65,
+                0, 0, 0, 64, 51, 51, 47, 64,
+                0, 0, 0, 64, 51, 179, 48, 64,
+            };
+            Assert.Equal(expected.Skip(skip), stream.ToArray().Skip(skip));
+        }
+
+        [Fact]
+        public void Fread()
+        {
+            byte[] data = new byte[] {
+                195, 137, 116, 195, 169,
+                1,0,0,0, 2,0,0,0,
+                195, 137, 116, 195, 169,
+                3,0,0,0, 4,0,0,0,
+                5, 6,
+                7, 8,
+                9,0, 10,0,
+                11,0, 12,0,
+                13,0,0,0,0,0,0,0,
+                14,0,0,0,0,0,0,0,
+                15,0,0,0,0,0,0,0,
+                17,0,0,0,0,0,0,0,
+                102, 102, 86, 65,
+                0, 0, 104, 65,
+                0, 0, 0, 64, 51, 51, 47, 64,
+                0, 0, 0, 64, 51, 179, 48, 64,
+            };
+
+            var stream = new MemoryStream(data);
+            using (var file = new FILE(stream, CFileMode.Read, Encoding.UTF8))
+            {
+                var s1 = new List<char>(new char[] { 'É', 't', 'é' });
+                Assert.Equal(3, fread(new PChar(s1), 3, file));
+                Assert.Equal(5, file.Position);
+
+                int[] b1 = new int[2];
+                Assert.Equal(2, fread(b1, 2, file));
+                Assert.Equal(new int[] { 1, 2 }, b1);
+                Assert.Equal(13, file.Position);
+
+                char[] b2 = new char[3];
+                Assert.Equal(3, fread(b2.GetPointer(), 3, file));
+                Assert.Equal(new char[] { 'É', 't', 'é' }, b2);
+                Assert.Equal(18, file.Position);
+
+                uint[] b3 = new uint[2];
+                Assert.Equal(2, fread(b3, 2, file));
+                Assert.Equal(new uint[] { 3, 4 }, b3);
+                Assert.Equal(26, file.Position);
+
+                byte[] b4 = new byte[2];
+                Assert.Equal(2, fread(b4, 2, file));
+                Assert.Equal(new byte[] { 5, 6 }, b4);
+                Assert.Equal(28, file.Position);
+
+                sbyte[] b5 = new sbyte[2];
+                Assert.Equal(2, fread(b5, 2, file));
+                Assert.Equal(new sbyte[] { 7, 8 }, b5);
+                Assert.Equal(30, file.Position);
+
+                short[] b6 = new short[2];
+                Assert.Equal(2, fread(b6, 2, file));
+                Assert.Equal(new short[] { 9, 10 }, b6);
+                Assert.Equal(34, file.Position);
+
+                ushort[] b7 = new ushort[2];
+                Assert.Equal(2, fread(b7, 2, file));
+                Assert.Equal(new ushort[] { 11, 12 }, b7);
+                Assert.Equal(38, file.Position);
+
+                long[] b8 = new long[2];
+                Assert.Equal(2, fread(b8, 2, file));
+                Assert.Equal(new long[] { 13, 14 }, b8);
+                Assert.Equal(54, file.Position);
+
+                ulong[] b9 = new ulong[2];
+                Assert.Equal(2, fread(b9, 2, file));
+                Assert.Equal(new ulong[] { 15, 17 }, b9);
+                Assert.Equal(70, file.Position);
+
+                float[] b10 = new float[2];
+                Assert.Equal(2, fread(b10, 2, file));
+                Assert.Equal(new float[] { 13.4f, 14.5f }, b10);
+                Assert.Equal(78, file.Position);
+
+                double[] b11 = new double[2];
+                Assert.Equal(2, fread(b11, 2, file));
+                Assert.Equal(new double[] { 15.6f, 16.7f }, b11);
+                Assert.Equal(94, file.Position);
+
+                Assert.Equal(-1, fread(new Pointer<int>(), 2, file));
+                Assert.Equal(-1, fread(b11, 2, null));
+            }
         }
 
     }

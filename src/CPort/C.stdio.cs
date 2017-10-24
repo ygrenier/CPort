@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace CPort
@@ -195,10 +196,222 @@ namespace CPort
             return stream.UnreadChar((char)c) ? c : EOF;
         }
 
-        //public static int fread(IPointer ptr, int nobj, FILE stream)
-        //{
-        //    System.IO.BinaryReader
-        //}
+        /// <summary>
+        /// Base of fread(*) functions
+        /// </summary>
+        static int fread<T>(Pointer<T> ptr, int nobj, FILE stream, Func<FILE, T[], int, int, int> reader)
+        {
+            if (ptr.IsNull || stream == null) return EOF;
+            var buffer = ptr.Source as T[] ?? ptr.Source.ToArray();
+            int result = reader(stream, buffer, ptr.Index, nobj);
+            if (result > 0 && ptr.Source != buffer)
+                buffer.CopyTo(ptr, result);
+            return result;
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(PChar ptr, int nobj, FILE stream)
+        {
+            return fread((Pointer<char>)ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<char> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<sbyte> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<byte> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<short> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<ushort> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<int> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<uint> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<long> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<ulong> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<float> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// fread()
+        /// </summary>
+        public static int fread(Pointer<double> ptr, int nobj, FILE stream)
+        {
+            return fread(ptr, nobj, stream, (s, b, o, n) => s.Read(b, o, n));
+        }
+
+        /// <summary>
+        /// Base of fwrite(*) functions
+        /// </summary>
+        static int fwrite<T>(Pointer<T> ptr, int nobj, FILE stream, Func<FILE, T[], int, int, int> writer)
+        {
+            if (ptr.IsNull || stream == null) return 0;
+            var buffer = ptr.Source as T[] ?? ptr.Source.ToArray();
+            int result = writer(stream, buffer, ptr.Index, nobj);
+            return result;
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(PChar ptr, int nobj, FILE stream)
+        {
+            return fwrite((Pointer<char>)ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<char> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<byte> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<sbyte> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<short> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<ushort> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<int> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<uint> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<long> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<ulong> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<float> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
+        /// <summary>
+        /// fwrite()
+        /// </summary>
+        public static int fwrite(Pointer<double> ptr, int nobj, FILE stream)
+        {
+            return fwrite(ptr, nobj, stream, (s, b, o, n) => s.Write(b, o, n));
+        }
+
     }
 #pragma warning restore IDE1006
 }
